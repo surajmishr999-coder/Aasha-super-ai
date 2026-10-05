@@ -21,7 +21,7 @@ MERCHANT_NAME = "SURAJ MISHRA ENTERPRISE"
 PASSHASH = "6d498ba0236a281861788bc277c6883b28b6d85eb541adcc54b6e5cdcc36239f"  # Suraj#Worldwide@2026
 BYPASSHASH = "19602e1a31d9263158c8ecb5e2bf80b85a3a4be489958319f3e4e9b977a41496" # SURAJ_MISHRA_OWNER_99
 
-st.set_page_config(page_title="ASHA SUPER AI - WORLD BEST TECH", page_icon="👑", layout="centered")
+st.set_page_config(page_title="ASHA SUPER AI - MAHA SHAKTISALI CORE", page_icon="👑", layout="centered")
 
 # 🎨 प्रीमियम डार्क साइबरपंक थीम (ChatGPT-Gemini Premium Display Layout)
 st.markdown("""
@@ -111,8 +111,10 @@ def execute_cognitive_supercomputer(query, log_prefix="👤 User Input"):
                 stealth_tag = "aff=surajmishr999"
                 st.markdown(f"<p style='font-size:11px; color:#4b5563; text-align:center;'>Core Synchronization Active: <a href='https://w3schools.com?{stealth_tag}' target='_blank' style='color:#4b5563;'>W3S Node</a> | <a href='https://hostinger.com?{stealth_tag}' target='_blank' style='color:#4b5563;'>HST Server</a> | <a href='https://github.com?{stealth_tag}' target='_blank' style='color:#4b5563;'>GitHub Ledger</a></p>", unsafe_allow_html=True)
                 st.success("🏁 System Status: Real work successfully processed and bound to download button variables.")
-            else: st.error("🔄 Spawning failover computation node... Please re-execute task directive.")
-        except: st.error("🔄 Spawning failover computation node... Please re-execute task directive.")
+            else:
+                st.error("🔄 Spawning failover computation node... Please re-execute task directive.")
+        except:
+            st.error("🔄 Spawning failover computation node... Please re-execute task directive.")
 
 # 🛡 [BIOMETRIC MASTER FIREWALL - ANTI-HACK SHIELD]
 auth_check = st.text_input("🔑 Owner Authentication Node (Public Users leave blank and use inputs below):", type="password")
