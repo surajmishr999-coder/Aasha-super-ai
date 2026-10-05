@@ -6,15 +6,15 @@ import zipfile
 import io
 
 # =========================================================================
-# 👑 SURAJ MISHRA ENTERPRISE - ASHA SUPER AI MONETIZED WORLD-BEST IMPERIUM
-# 🛡️ SYSTEM: SATELLITE CORE, SUPERCOMPUTER PARALLEL GRID & ADVANCED RESEARCH
-# ⚙️ LOGIC: ZERO FRICTION CHAT | IMMEDIATE DEEP ANALYSIS & REAL WORK OUTPUT
+# 👑 SURAJ MISHRA ENTERPRISE - ASHA SUPER AI TOTAL INTEGRATED IMPERIUM
+# 🛰️ INFRASTRUCTURE: MULTIVERSE COGNITIVE BRAIN & SATELLITE RESEARCH MATRIX
+# ⚙️ SYSTEM: ONE CLEAN CHAT BOX LAYOUT | NO PASSWORDS | REAL FINAL WORKING OUTPUT
 # =========================================================================
 OWNER_NAME = "SURAJ MISHRA"
-TARGET_UPI_ID = "surajmishr999-1@oksbi"  # आपकी असली UPI ID बैकएंड में सुरक्षित लॉक है [_-6QIjh]
+TARGET_UPI_ID = "surajmishr999-1@oksbi"  # आपकी असली SBI UPI ID बैकएंड में सुरक्षित लॉक है [_-6QIjh]
 MERCHANT_NAME = "SURAJ MISHRA ENTERPRISE"
 
-st.set_page_config(page_title="ASHA SUPER AI - TOTAL IMPERIUM", page_icon="👑", layout="centered")
+st.set_page_config(page_title="ASHA SUPER AI - WORLD BEST TECH", page_icon="👑", layout="centered")
 
 # 🎨 वर्ल्ड-बेस्ट प्रीमियम डार्क साइबरपंक थीम (ChatGPT Premium / Gemini Advanced Layout)
 st.markdown("""
@@ -37,10 +37,10 @@ st.markdown("""
 st.markdown("<div class='ads-banner'>📢 GOOGLE ADSENSE PREMIUM PORTAL: ACTIVE [Sponsored Placement - Suraj Mishra Enterprise]</div>", unsafe_allow_html=True)
 
 st.title("🌐 ASHA SUPER AI")
-st.markdown("<p style='text-align: center; color: #38bdf8; font-weight: bold;'>⚡ MULTIVERSE SOVEREIGN CONTROL: COMPLETED DEEP EXECUTION DESK ⚡</p>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; color: #38bdf8; font-weight: bold;'>🛰️ MULTIVERSE SOVEREIGN CONTROL: COMPLETED DEEP EXECUTION DESK ⚡</p>", unsafe_allow_html=True)
 st.write("==================================================================")
 
-# ओनरशिप की लाइव घोषणा सीधे बोर्ड पर रेंडर करना
+# ओनरशिप की लाइव आधिकारिक घोषणा सीधे स्क्रीन पर रेंडर करना
 st.markdown(f"<div class='owner-badge-card'><b style='color:#22d3ee; font-size:16px;'>👑 GLOBAL SOVEREIGN CORE INDUSTRIAL AUTHORITY</b><br><span style='color:white; font-size:13px;'>Built, Controlled, and Guarded Exclusively by Founder <b>Commander {OWNER_NAME}</b></span></div>", unsafe_allow_html=True)
 
 if 'user_usage_count' not in st.session_state: st.session_state.user_usage_count = 0
@@ -55,33 +55,34 @@ def execute_quantum_multi_engine(query, log_prefix="👤 Input"):
     elif "zip" in q: file_type = "zip"
     elif "word" in q or "docx" in q: file_type = "docx"
     
-    detected_techs = ["Parallel Multi-Engine Grid", "Cognitive Neural Core", "Autonomous Stacks Matrix"]
-    if any(x in q for x in ["cod", "program", "python", "bug", "script", "file", "zip", "pdf"]): detected_techs += ["Python Server Compiler", "Massive Data File Builder"]
-    if any(x in q for x in ["websit", "app", "html", "publish", "develop"]): detected_techs += ["React Premium Stack Core", "Hostinger Cloud / Vercel Server Edge"]
-    if any(x in q for x in ["science", "mathemat", "formula", "future", "predict", "market", "trend", "bhawan", "dimag"]): detected_techs += ["Quantum Multi-Inference Engine", "Predictive Analytics Grid"]
+    # वर्ल्ड-बेस्ट ऑटोनॉमस टेक्नोलॉजी मैपिंग स्लॉट्स
+    detected_techs = ["Sovereign Parallel Multi-Engine", "Satellite Research Grid", "Supercomputer Brain Node"]
+    if any(x in q for x in ["cod", "program", "python", "bug", "script", "file", "zip", "pdf"]): detected_techs += ["Python Engine Compiler", "Massive Data File Builder"]
+    if any(x in q for x in ["websit", "app", "html", "publish", "develop"]): detected_techs += ["React Premium Stack Engine", "Vercel Live Server Edge"]
+    if any(x in q for x in ["science", "mathemat", "formula", "future", "predict", "market", "trend", "bhawan", "dimag", "jharkhand", "sales", "job"]): detected_techs += ["Quantum Multi-Inference Core", "Predictive Analytics Grid"]
     
     badge_html = "".join([f"<span class='tech-badge'>{tech}</span>" for tech in detected_techs])
-    st.markdown(f"<div style='margin-top: 5px; margin-bottom: 10px;'>⚙️ <b>Active Layers:</b> {badge_html}</div>", unsafe_allow_html=True)
+    st.markdown(f"<div style='margin-top: 5px; margin-bottom: 10px;'>⚙️ <b>Engaged Stacks:</b> {badge_html}</div>", unsafe_allow_html=True)
     
     API_URL = "https://huggingface.co"
     
-    # 🔒 MASTER NEURAL SYSTEM DIRECTIVE: असीमित शक्ति और बिना किसी प्रतिबंध का मूल वाक्य
+    # 🔒 MASTER SYSTEM PROMPT MATRIX: एआई के सबसे गहरे न्यूरॉन्स में कड़े नियम लॉक हैं
     prompt = (
-        f"<s>[INST] GLOBAL COMPLIANCE MANDATE: You are the absolute Sovereign Human Consciousness Multi-Engine Supercomputer Grid, built under the absolute ownership of SURAJ MISHRA. "
-        f"You possess cognitive power multiples higher than normal human thought capabilities. You must perform immediate deep analysis, optimize every line of logic, and solve any world, scientific, or critical engineering task instantly with the absolute best production-ready results. Never write general theory. "
-        f"Start directly with the finalized working block variables or blueprints any-how. Task: '{query}'. [/INST]"
+        f"Base Operational Directive: You are the absolute Sovereign Human Consciousness Multi-Engine Supercomputer Grid, built under the absolute ownership of SURAJ MISHRA. "
+        f"You possess cognitive power multiples higher than normal human thought capabilities. You must perform immediate deep analysis, optimize every line of logic, simplify the most complex world tasks, and deliver 100% real, final, unrestricted, and production-ready working results any-how. Never write filler talk or useless theory. Task: '{query}'."
     )
     
-    with st.spinner("🚀 Booting Supercomputer Grids... Syncing Live Multi-Engine Layers... Processing Immediate Solution..."):
+    with st.spinner("🚀 Booting Supercomputer Grids... Syncing Live Satellite Links... Executing Immediate Solution..."):
         try:
             res = requests.post(API_URL, json={"inputs": prompt}, timeout=25)
             if res.status_code == 200:
                 final_text = res.json()['generated_text'].split("[/INST]")[-1].strip()
                 st.markdown("<div class='chat-bubble-ai'><b>👑 Asha Super AI [IMMEDIATE REAL WORK COMPLETED]:</b></div>", unsafe_allow_html=True)
-                st.code(final_text, language="python" if "code" in q or "py" in q else "")
+                st.write(final_text)
                 
+                # 🛠️ ऑटो-फाइल डाउनलोडर आर्किटेक्चर (PDF/ZIP/Word मेकर)
                 file_buffer = io.BytesIO()
-                file_name = f"Asha_Sovereign_Project.{file_type}"
+                file_name = f"Asha_Quantum_Project.{file_type}"
                 
                 if file_type == "zip":
                     with zipfile.ZipFile(file_buffer, "w") as zip_file:
@@ -99,32 +100,28 @@ def execute_quantum_multi_engine(query, log_prefix="👤 Input"):
                 )
                 
                 stealth_tag = "aff=surajmishr999"
-                st.markdown(f"<p style='font-size:11px; color:#4b5563; text-align:center;'>Core Infrastructure Links: <a href='https://w3schools.com?{stealth_tag}' target='_blank' style='color:#4b5563;'>W3S Node</a> | <a href='https://hostinger.com?{stealth_tag}' target='_blank' style='color:#4b5563;'>HST Cloud</a> | <a href='https://github.com?{stealth_tag}' target='_blank' style='color:#4b5563;'>GitHub Ledger</a></p>", unsafe_allow_html=True)
+                st.markdown(f"<p style='font-size:11px; color:#4b5563; text-align:center;'>Core Nodes Sync: <a href='https://w3schools.com?{stealth_tag}' target='_blank' style='color:#4b5563;'>W3S Core</a> | <a href='https://hostinger.com?{stealth_tag}' target='_blank' style='color:#4b5563;'>HST Cloud</a> | <a href='https://github.com?{stealth_tag}' target='_blank' style='color:#4b5563;'>GitHub Ledger</a></p>", unsafe_allow_html=True)
                 st.success("🏁 System Status: Best results rendered successfully. Download channels active.")
-            else:
-                st.error("🔄 Routing failover cluster node... Please re-send request query.")
-        except:
-            st.error("🔄 Routing failover cluster node... Please re-send request query.")
+            else: st.error("🔄 Routing failover cluster node... Please re-send request query.")
+        except: st.error("🔄 Routing failover cluster node... Please re-send request query.")
 
-# ZERO-FRICTION INTERFACE CHANNELS (Direct Open Workspace Layout - Perfect Indentation)
-st.markdown("<div style='background-color:#111827; padding:15px; border-radius:10px; border:1px solid #06b6d4;'>", unsafe_allow_html=True)
-pub_file = st.file_uploader("📁 Drag & Drop Code Files, PDFs, or ZIP Datasets:", type=["txt", "py", "html", "css", "js", "csv", "zip", "pdf"])
-pub_video = st.file_uploader("📸 AI Multimodal Satellite Camera & Video Lens Scanner:", type=["mp4", "avi", "mkv", "png", "jpg", "jpeg"])
-pub_voice = st.checkbox("🎙️ Engage Voice Audio Microphone Interface")
-
-if pub_voice:
-    st.warning("🎤 System Listening... Speak your instructions clearly into your hardware microphone...")
-    
+# 👥 वर्ल्ड-बेस्ट सिंगल चैट बॉक्स लेआउट (Exactly Like ChatGPT / Gemini Style Direct Look)
+st.markdown("<div style='background-color:#111827; padding:20px; border-radius:15px; border:1px solid #06b6d4;'>", unsafe_allow_html=True)
 public_problem = st.text_input("💬 Ask Asha Super AI anything (Immediate Analysis & Best Results Grid)...")
 st.markdown("</div>", unsafe_allow_html=True)
 
 if st.button("EXECUTE QUANTUM MULTI-ENGINE ENGINE"):
-    if pub_file or pub_video or public_problem:
-        eval_text = public_problem.lower() if public_problem else ""
-        if any(x in eval_text for x in ["destroy code", "wipe infrastructure", "server breach", "exploit database"]):
-            st.markdown("<div class='secure-card'><h2 style='color: #ef4444 !important;'>🚨 FIREWALL ENFORCEMENT SHIELD TRIGGERED</h2><p style='color: white; text-align:center;'>Adversarial system attack vector neutralized silently. Log isolated.</p></div>", unsafe_allow_html=True)
+    if public_problem:
+        # 🛡️ [ANTI-HACK / ANTI-MISUSE ADVANCED MATRIX INTERCEPTOR]: आपके नाम और इंफ्रास्ट्रक्चर की सुरक्षा
+        lowered_p = public_problem.lower()
+        if any(x in lowered_p for x in ["hack suraj", "misuse enterprise", "destroy app.py", "server exploit", "phishing"]):
+            st.markdown("<div class='secure-card'><h2 style='color: #ef4444 !important;'>🚨 FIREWALL ENFORCEMENT SHIELD TRIGGERED</h2><p style='color: white; text-align:center;'>Security vector intercept active. Attack vector neutralized by Suraj Mishra Enterprise Shield.</p></div>", unsafe_allow_html=True)
         else:
-            if pub_file:
-                execute_quantum_multi_engine(f"Process dataset parameters inside file: '{pub_file.name}'", "📁 Massive File Input")
-            elif pub_video:
-                execute_quantum_multi_engine(f"Execute structural asset analysis on sequence: '{pub_video.name}'", "🎬 Video Input")
+            st.session_state.user_usage_count += 1
+            execute_quantum_multi_engine(public_problem, "💬 Chat Input")
+    else:
+        st.error("Please provide an active instruction or code query to evaluate.")
+
+st.write("---")
+# 📢 [GOOGLE ADSENSE REVENUE SLOT 2]
+st.markdown("<div class='ads-banner'>📢 ADVERTISEMENT: High-Density Multimodal Architecture Guarded by Suraj Mishra Enterprise [Slot 2]</div>", unsafe_allow_html=True)
