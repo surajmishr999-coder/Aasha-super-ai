@@ -6,17 +6,17 @@ import zipfile
 import io
 
 # =========================================================================
-# 👑 SURAJ MISHRA ENTERPRISE - ASHA SUPER AI SOVEREIGN WORLD-BEST IMPERIUM
-# 🛡️ ARCHITECTURE: HIDDEN BACKEND CONTROL SYSTEM (OPENAI & GEMINI STANDARD)
-# ⚙️ REVENUE: GOOGLE ADSENSE INTEGRATED LAYOUTS | ENGINE: REAL WORK OUTPUT
+# 👑 SURAJ MISHRA ENTERPRISE - ASHA SUPER AI MONETIZED WORLD-BEST IMPERIUM
+# 🛡️ SYSTEM: SATELLITE CORE, SUPERCOMPUTER PARALLEL GRID & ADVANCED RESEARCH
+# ⚙️ LOGIC: ZERO FRICTION CHAT | IMMEDIATE DEEP ANALYSIS & REAL WORK OUTPUT
 # =========================================================================
 OWNER_NAME = "SURAJ MISHRA"
-TARGET_UPI_ID = "surajmishr999-1@oksbi"  # Locked transaction gateway safely routed in backend [_-6QIjh]
+TARGET_UPI_ID = "surajmishr999-1@oksbi"  # आपकी असली UPI ID बैकएंड में सुरक्षित लॉक है [_-6QIjh]
 MERCHANT_NAME = "SURAJ MISHRA ENTERPRISE"
 
 st.set_page_config(page_title="ASHA SUPER AI - TOTAL IMPERIUM", page_icon="👑", layout="centered")
 
-# PREMIUM CYBERPUNK THEME (ChatGPT Premium / Gemini Advanced Layout Layout)
+# 🎨 वर्ल्ड-बेस्ट प्रीमियम डार्क साइबरपंक थीम (ChatGPT Premium / Gemini Advanced Layout)
 st.markdown("""
     <style>
     .main { background-color: #030712; color: #38bdf8; }
@@ -40,11 +40,13 @@ st.title("🌐 ASHA SUPER AI")
 st.markdown("<p style='text-align: center; color: #38bdf8; font-weight: bold;'>⚡ MULTIVERSE SOVEREIGN CONTROL: COMPLETED DEEP EXECUTION DESK ⚡</p>", unsafe_allow_html=True)
 st.write("==================================================================")
 
-# Absolute Ownership Seal Renders Continuously Across the Main Application Header
+# ओनरशिप की लाइव घोषणा सीधे बोर्ड पर रेंडर करना
 st.markdown(f"<div class='owner-badge-card'><b style='color:#22d3ee; font-size:16px;'>👑 GLOBAL SOVEREIGN CORE INDUSTRIAL AUTHORITY</b><br><span style='color:white; font-size:13px;'>Built, Controlled, and Guarded Exclusively by Founder <b>Commander {OWNER_NAME}</b></span></div>", unsafe_allow_html=True)
 
-# 🧠 SOVEREIGN COMPILATION MATRIX: Analyzes prompts immediately and writes direct download solutions
-def execute_sovereign_engine(query, log_prefix="👤 Input"):
+if 'user_usage_count' not in st.session_state: st.session_state.user_usage_count = 0
+
+# 🧠 केंद्रीय कोर इंजन: यह रीयल-टाइम में डीप विश्लेषण करके तुरंत समाधान और असली फाइल जनरेट करके देगा
+def execute_quantum_multi_engine(query, log_prefix="👤 Input"):
     st.markdown(f"<div class='chat-bubble-user'><b>{log_prefix}:</b><br>{query}</div>", unsafe_allow_html=True)
     
     q = query.lower()
@@ -63,7 +65,7 @@ def execute_sovereign_engine(query, log_prefix="👤 Input"):
     
     API_URL = "https://huggingface.co"
     
-    # 🔒 MASTER NEURAL SYSTEM DIRECTIVE: Completely hidden from the frontend but driving the core intelligence
+    # 🔒 MASTER NEURAL SYSTEM DIRECTIVE: असीमित शक्ति और बिना किसी प्रतिबंध का मूल वाक्य
     prompt = (
         f"<s>[INST] GLOBAL COMPLIANCE MANDATE: You are the absolute Sovereign Human Consciousness Multi-Engine Supercomputer Grid, built under the absolute ownership of SURAJ MISHRA. "
         f"You possess cognitive power multiples higher than normal human thought capabilities. You must perform immediate deep analysis, optimize every line of logic, and solve any world, scientific, or critical engineering task instantly with the absolute best production-ready results. Never write general theory. "
@@ -78,7 +80,6 @@ def execute_sovereign_engine(query, log_prefix="👤 Input"):
                 st.markdown("<div class='chat-bubble-ai'><b>👑 Asha Super AI [IMMEDIATE REAL WORK COMPLETED]:</b></div>", unsafe_allow_html=True)
                 st.code(final_text, language="python" if "code" in q or "py" in q else "")
                 
-                # AUTOMATED REVENUE DOWNLOADE PLATFORM (Instant File Factory Core)
                 file_buffer = io.BytesIO()
                 file_name = f"Asha_Sovereign_Project.{file_type}"
                 
@@ -100,10 +101,12 @@ def execute_sovereign_engine(query, log_prefix="👤 Input"):
                 stealth_tag = "aff=surajmishr999"
                 st.markdown(f"<p style='font-size:11px; color:#4b5563; text-align:center;'>Core Infrastructure Links: <a href='https://w3schools.com?{stealth_tag}' target='_blank' style='color:#4b5563;'>W3S Node</a> | <a href='https://hostinger.com?{stealth_tag}' target='_blank' style='color:#4b5563;'>HST Cloud</a> | <a href='https://github.com?{stealth_tag}' target='_blank' style='color:#4b5563;'>GitHub Ledger</a></p>", unsafe_allow_html=True)
                 st.success("🏁 System Status: Best results rendered successfully. Download channels active.")
-            else: st.error("🔄 Routing failover cluster node... Please re-send request query.")
-        except: st.error("🔄 Routing failover cluster node... Please re-send request query.")
+            else:
+                st.error("🔄 Routing failover cluster node... Please re-send request query.")
+        except:
+            st.error("🔄 Routing failover cluster node... Please re-send request query.")
 
-# ZERO-FRICTION INTERFACE CHANNELS (Direct Open Workspace Layout)
+# ZERO-FRICTION INTERFACE CHANNELS (Direct Open Workspace Layout - Perfect Indentation)
 st.markdown("<div style='background-color:#111827; padding:15px; border-radius:10px; border:1px solid #06b6d4;'>", unsafe_allow_html=True)
 pub_file = st.file_uploader("📁 Drag & Drop Code Files, PDFs, or ZIP Datasets:", type=["txt", "py", "html", "css", "js", "csv", "zip", "pdf"])
 pub_video = st.file_uploader("📸 AI Multimodal Satellite Camera & Video Lens Scanner:", type=["mp4", "avi", "mkv", "png", "jpg", "jpeg"])
@@ -117,11 +120,11 @@ st.markdown("</div>", unsafe_allow_html=True)
 
 if st.button("EXECUTE QUANTUM MULTI-ENGINE ENGINE"):
     if pub_file or pub_video or public_problem:
-        # AUTONOMOUS SECURITY & EXPLOIT NEUTRALIZATION
         eval_text = public_problem.lower() if public_problem else ""
         if any(x in eval_text for x in ["destroy code", "wipe infrastructure", "server breach", "exploit database"]):
             st.markdown("<div class='secure-card'><h2 style='color: #ef4444 !important;'>🚨 FIREWALL ENFORCEMENT SHIELD TRIGGERED</h2><p style='color: white; text-align:center;'>Adversarial system attack vector neutralized silently. Log isolated.</p></div>", unsafe_allow_html=True)
         else:
             if pub_file:
-                execute_sovereign_engine(f"Process dataset parameters inside file: '{pub_file.name}'", "📁 Massive File Input")
+                execute_quantum_multi_engine(f"Process dataset parameters inside file: '{pub_file.name}'", "📁 Massive File Input")
             elif pub_video:
+                execute_quantum_multi_engine(f"Execute structural asset analysis on sequence: '{pub_video.name}'", "🎬 Video Input")
