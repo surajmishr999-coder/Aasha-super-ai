@@ -11,7 +11,7 @@ import io
 # ⚙️ LOGIC: ZERO THIRD-PARTY AI DEPENDENCE | CHATGPT LAYOUT WITH '+' ATTACHMENT
 # =========================================================================
 OWNER_NAME = "SURAJ MISHRA"
-TARGET_UPI_ID = "surajmishr999-1@oksbi"  # आपकी असली SBI UPI ID बैकएंड में सुरक्षित लॉक है
+TARGET_UPI_ID = "surajmishr999-1@oksbi"  # आपकी असली SBI UPI ID बैकएंड में सुरक्षित लॉक है [_-6QIjh]
 MERCHANT_NAME = "SURAJ MISHRA ENTERPRISE"
 
 st.set_page_config(page_title="ASHA SUPER AI - INDEPENDENT IMPERIUM", page_icon="👑", layout="centered")
@@ -88,7 +88,7 @@ def execute_independent_action_matrix(query, log_prefix="👤 Input"):
         st.markdown("<div class='chat-bubble-ai'><b>👑 Asha Super AI [REAL COMPLETED WORK]:</b></div>", unsafe_allow_html=True)
         st.write(final_text)
         
-        # 🛠️ ऑटो-फाइल डाउनलोडर आर्किटेक्चर (PDF/ZIP/Word Factory Maker)
+        # 🛠️ ऑटो-فाइल डाउनलोडर आर्किटेक्चर (PDF/ZIP/Word Factory Maker)
         file_buffer = io.BytesIO()
         file_name = f"Asha_Independent_Project.{file_type}"
         file_buffer.write(f"SURAJ MISHRA ENTERPRISE - ASHA SUPER AI REAL WORK REPORT\n\nQuery: {query}\n\n{final_text}".encode('utf-8'))
