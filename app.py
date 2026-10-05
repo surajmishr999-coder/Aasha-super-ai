@@ -59,7 +59,7 @@ def execute_independent_action_matrix(query, log_prefix="👤 Input"):
     st.markdown(f"<div style='margin-top: 5px; margin-bottom: 10px;'>⚙️ <b>Active Stacks:</b> {badge_html}</div>", unsafe_allow_html=True)
     
     with st.spinner("🛰️ Spawning Independent Multiverse Grids... Executing Pure Real Final Work Output Any-How..."):
-        # 🔒 [ABSOLUTE INDEPENDENT FULFILLMENT MATRIX]: बाहरी एआई के बिना खुद काम करने वाला कोर एल्गोरिदम
+        # 🔒 [ABSOLUTE INDEPENDENT FULFILLMENT MATRIX]
         if any(x in q for x in ["jharkhand", "sales", "job", "vacancy", "cement", "apply", "pawan"]):
             final_text = (
                 "### 🛰️ ASHA SUPER AI: INDEPENDENT GLOBAL REAL WORK COMPLETED\n\n"
@@ -139,3 +139,4 @@ if st.button("SEND TO MULTIVERSE CORE"):
             st.session_state.user_usage_count += 1
             combined_query = public_problem if public_problem else ""
             if uploaded_asset:
+                combined_query += f" [Processed Attached File Asset Node: '{uploaded_asset.name}']"
