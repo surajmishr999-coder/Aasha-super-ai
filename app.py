@@ -6,12 +6,12 @@ import zipfile
 import io
 
 # =========================================================================
-# 👑 SURAJ MISHRA ENTERPRISE - ASHA SUPER AI TOTAL INTEGRATED SUPREMAPATH
+# 👑 SURAJ MISHRA ENTERPRISE - ASHA SUPER AI EXCLUSIVE OWNER IMPERIUM
 # 🛡️ SECURITY: SHA-256 ANTI-MISUSE VAULT | INTEGRITY: FULL 33-NODE PLAN 固定
 # ⚙️ SYSTEM: WORLD'S BEST TECHNOLOGY BACKEND | ENGINE: REAL FINAL WORK OUTPUT
 # =========================================================================
 OWNER_NAME = "SURAJ MISHRA"
-TARGET_UPI_ID = "surajmishr999-1@oksbi"  # आपकी असली SBI UPI ID जहाँ पैसा आएगा [_-6QIjh]
+TARGET_UPI_ID = "surajmishr999-1@oksbi"  # आपकी असली SBI UPI ID जहाँ पैसा आएगा
 PAYMENT_AMOUNT_WEEK = "149.00"           # 7-दिन का वीकली पास ₹149 (REPEATING)
 PAYMENT_AMOUNT_3MONTH = "499.00"         # 3-महीने का मास्टर पास ₹499 (REPEATING)
 PAYMENT_AMOUNT_YEAR = "1999.00"          # 1-साल का एनुअल लाइसेंस ₹1999 (REPEATING)
@@ -21,9 +21,9 @@ MERCHANT_NAME = "SURAJ MISHRA ENTERPRISE"
 PASSHASH = "6d498ba0236a281861788bc277c6883b28b6d85eb541adcc54b6e5cdcc36239f"  # Suraj#Worldwide@2026
 BYPASSHASH = "19602e1a31d9263158c8ecb5e2bf80b85a3a4be489958319f3e4e9b977a41496" # SURAJ_MISHRA_OWNER_99
 
-st.set_page_config(page_title="ASHA SUPER AI - MAHA SHAKTISALI CORE", page_icon="👑", layout="centered")
+st.set_page_config(page_title="ASHA SUPER AI - TOTAL IMPERIUM", page_icon="👑", layout="centered")
 
-# 🎨 प्रीमियम डार्क साइबरपंक थीम (ChatGPT-Gemini Premium Display Layout)
+# 🎨 प्रीमियम साइबरपंक डार्क कमांड सेंटर थीम (ChatGPT Premium / Gemini Advanced Layout)
 st.markdown("""
     <style>
     .main { background-color: #030712; color: #38bdf8; }
@@ -125,5 +125,5 @@ if auth_check:
         st.markdown("<div class='secure-card'><h2 style='color: #ef4444 !important;'>🚨 FIREWALL ENFORCEMENT SHIELD ACTIVE</h2><p style='color: white; text-align:center;'>Cyber-attack vector neutralized. Infrastructure fully guarded by Suraj Mishra Enterprise.</p></div>", unsafe_allow_html=True)
         st.stop()
 
-# 👑 ओनर सुप्रीम एक्सेस बाईपास Mode (Type '1' for absolute free power)
-if auth_check and (verify_secure_token(auth_check, PASSHASH) or verify_secure_token(auth_check, BYPASSHASH) or auth_check == "1"):
+    # 👑 ओनर सुप्रीम एक्सेस बाईपास Mode (Type '1' for absolute free power)
+    if verify_secure_token(auth_check, PASSHASH) or verify_secure_token(auth_check, BYPASSHASH) or auth_check == "1":
