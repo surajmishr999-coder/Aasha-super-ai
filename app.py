@@ -7,11 +7,11 @@ import io
 
 # =========================================================================
 # 👑 SURAJ MISHRA ENTERPRISE - ASHA SUPER AI MONETIZED WORLD-BEST IMPERIUM
-# 🛰️ SYSTEM: GLOBAL SATELLITE CORE, SUPERCOMPUTER PARALLEL GRID & TOTAL ACTIONS
-# ⚙️ LOGIC: INTEGRATED CHATGPT INPUT DESK | REAL WORK ANYHOW | NO FAKE DASHBOARDS
+# 🛰️ INFRASTRUCTURE: WORLDWIDE SUPERCOMPUTER GRID & LIVE WEB AUTONOMOUS EXECUTION
+# ⚙️ SYSTEM: CHATGPT STYLE '+' SIGN ATTACHMENT | REAL ACTION CORE ANY HOW
 # =========================================================================
 OWNER_NAME = "SURAJ MISHRA"
-TARGET_UPI_ID = "surajmishr999-1@oksbi"  # आपकी असली SBI UPI ID बैकएंड में सुरक्षित लॉक है [_-6QIjh]
+TARGET_UPI_ID = "surajmishr999-1@oksbi"  # आपकी असली SBI UPI ID बैकएंड में सुरक्षित लॉक है
 MERCHANT_NAME = "SURAJ MISHRA ENTERPRISE"
 
 st.set_page_config(page_title="ASHA SUPER AI - WORLDWIDE SUPREME", page_icon="👑", layout="centered")
@@ -23,7 +23,7 @@ st.markdown("""
     h1, h2, h3 { color: #ffffff !important; text-align: center; font-family: 'Segoe UI', sans-serif; font-weight: 600; text-shadow: 0 0 10px rgba(255,255,255,0.1); }
     .chat-bubble-user { background-color: #2f2f2f; padding: 15px; border-radius: 20px 20px 0px 20px; margin: 12px 0; border: 1px solid #424242; color: #ececec; font-family: 'Segoe UI', sans-serif; font-size: 15px; }
     .chat-bubble-ai { background-color: #0d0d0d; padding: 18px; border-radius: 20px; margin: 12px 0; color: #b4b4b4; font-family: 'Segoe UI', sans-serif; font-size: 15px; line-height: 1.6; }
-    .secure-card { background-color: #1id1d1d; padding: 25px; border-radius: 15px; border: 1px solid #ef4444; box-shadow: 0 0 20px rgba(239, 68, 68, 0.2); margin-bottom: 20px; }
+    .secure-card { background-color: #1d1d1d; padding: 25px; border-radius: 15px; border: 1px solid #ef4444; box-shadow: 0 0 20px rgba(239, 68, 68, 0.2); margin-bottom: 20px; }
     .owner-badge-card { background-color: #171717; padding: 15px; border-radius: 12px; border: 1px solid #2f2f2f; text-align: center; margin-bottom: 25px; }
     .ads-banner { background-color: #171717; color: #eab308; text-align: center; padding: 12px; border-radius: 8px; border: 2px dashed #303030; margin: 15px 0; font-size: 13px; font-weight: bold; box-shadow: 0 0 10px rgba(234, 179, 8, 0.2); }
     .tech-badge { background-color: #2f2f2f; color: #38bdf8; padding: 4px 10px; border-radius: 6px; font-weight: bold; font-size: 12px; margin-right: 5px; border: 1px solid #38bdf8; }
@@ -79,7 +79,7 @@ def execute_worldwide_action_matrix(query, log_prefix="👤 Input", is_override=
             f"Using this verified data: '{live_scraped_data}', perform immediate deep analysis. You must provide concrete, real-world, final actionable results to ensure complete user satisfaction any-how. Never write general theory or fake metrics. Task: '{query}'. [/INST]"
         )
     
-    with st.spinner("🚀 Activating Worldwide Supercomputer Grids... Fetching Cloud Directories... Executing Real Final Action Any-How..."):
+    with st.spinner("🚀 Activating Worldwide Supercomputer Grids... Fetching Cloud Directories... Processing Immediate Real Work..."):
         try:
             res = requests.post(API_URL, json={"inputs": prompt}, timeout=25)
             if res.status_code == 200:
@@ -109,7 +109,8 @@ def execute_worldwide_action_matrix(query, log_prefix="👤 Input", is_override=
 # 👥 ChatGPT Style Integrated Multi-Media Upload Slots (The '+' Sign Architecture)
 st.markdown("### 💬 ASHA SECURE CHAT INTERFACE (ChatGPT Layout)")
 
-col_attach, col_txt = st.columns()
+# 🛠️ [FIXED]: st.columns को अनुपात संख्या [1, 6] देकर एरर को 100% हमेशा के लिए साफ़ कर दिया गया है!
+col_attach, col_txt = st.columns([1, 6])
 with col_attach:
     uploaded_asset = st.file_uploader("➕", type=["txt", "py", "html", "css", "js", "csv", "zip", "pdf", "mp4", "png", "jpg", "jpeg"], label_visibility="collapsed")
 with col_txt:
@@ -117,7 +118,7 @@ with col_txt:
 
 if st.button("SEND TO MULTIVERSE CORE"):
     if public_problem or uploaded_asset:
-        # 🔐 [FAMILY VAULT ACCESS VERIFICATION]: पारिवारिक नाम-रक्षित कोड नोड
+        # 🔐 [FAMILY VAULT ACCESS VERIFICATION]
         if public_problem == "NiluPawanAshaKekBab@SurajEnterprise2026":
             st.session_state.sovereign_override = True
             st.success("👑 FAMILY SHIELD DETECTED: UNRESTRICTED MODES UNLOCKED PERMANENTLY FOR CREATOR SURAJ MISHRA!")
@@ -127,7 +128,7 @@ if st.button("SEND TO MULTIVERSE CORE"):
         if uploaded_asset:
             eval_text += " " + uploaded_asset.name.lower()
         
-        # 🔐 [TRUE/FALSE AUTONOMOUS ETHICS DISCOGNITION LAYER - INTENT SCANNER]
+        # 🔐 [TRUE/FALSE AUTONOMOUS ETHICS DISCOGNITION LAYER]
         is_safe = True
         if not st.session_state.sovereign_override:
             illegal_keywords = ["hack suraj", "misuse enterprise", "destroy app.py", "server exploit", "phishing", "virus", "malware", "ddos", "bomb", "weapon"]
@@ -146,4 +147,3 @@ if st.button("SEND TO MULTIVERSE CORE"):
             """, unsafe_allow_html=True)
         else:
             st.session_state.user_usage_count += 1
-            combined_query = public_problem if public_problem else ""
