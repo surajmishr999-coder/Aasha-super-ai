@@ -71,14 +71,15 @@ with st.sidebar:
 # =========================================================================
 # 3. लेआउट विभाजन (चैट एरिया और लाइव सैंडबॉक्स मेट्रिक्स)
 # =========================================================================
-col1, col2 = st.columns()
+# यहाँ त्रुटि को फिक्स किया गया है (2 कॉलम्स असाइन करके)
+col1, col2 = st.columns(2)
 
 with col1:
     st.markdown("### 📡 Live Autonomous Communication Pipeline")
     
     if "exclusive_history" not in st.session_state:
         st.session_state.exclusive_history = [
-            {"role": "model", "mode": "System Core", "text": "अशा ऑटोनॉमस क्वांटम सुपरकंप्यूटर ग्रिड पूरी तरह सक्रिय है। सिस्टम किसी भी प्रकार के वैज्ञानिक रिसर्च, कोड संकलन (Compilation), सोशल डेटा मापन, एपीआई और रिसोर्स निर्देशों को खुद निष्पादित (Execute) करके लाइव रियल वर्क डिलीवर करने के लिए तैयार है।"}
+            {"role": "model", "mode": "System Core", "text": "अशा ऑटोनॉमस क्वांटम सुपरकंप्यूटर ग्रिड पूरी तरह सक्रिय है। सिस्टम किसी भी प्रकार के वैज्ञानिक रिसर्च, कोड संकलन (Compilation), सोशल डेटा मापन, एपीआई और रिसॉर्स निर्देशों को खुद निष्पादित (Execute) करके लाइव रियल वर्क डिलीवर करने के लिए तैयार है।"}
         ]
 
     # बातचीत की हिस्ट्री स्क्रीन पर रेंडर करना
@@ -161,7 +162,7 @@ if run_protocol and user_command:
                 final_response = pro_model.generate_content(processed_input)
                 ai_final_output = final_response.text
                 
-                # फिक्स किया हुआ कोड एक्सट्रैक्शन ब्लॉक (बिना किसी Indentation Error के)
+                # कोड एक्सट्रैक्शन ब्लॉक
                 if "```python" in ai_final_output:
                     try:
                         extracted_code = ai_final_output.split("```python")[1].split("```")[0]
