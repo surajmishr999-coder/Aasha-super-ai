@@ -4,176 +4,133 @@ import os
 import time
 
 # =========================================================================
-# 1. क्वांटम कोर पेज कॉन्फ़िगरेशन
+# 1. गूगल ऐप लेआउट कॉन्फ़िगरेशन
 # =========================================================================
 st.set_page_config(
-    page_title="Asha Quantum Autonomous Engine",
+    page_title="Asha Google AI Engine",
     page_icon="👑",
-    layout="wide",
-    initial_sidebar_state="expanded"
+    layout="centered", # बिल्कुल मोबाइल ऐप की तरह सेंटर्ड लुक देने के लिए
+    initial_sidebar_state="collapsed"
 )
 
-# दुनिया का सबसे एडवांस नियोन MATRIX थीम (क्लाउड सुपरकंप्यूटर इंटरफेस)
+# 100% असली Google App/Gemini जैसी डार्क थीम CSS
 st.markdown("""
 <style>
-    .main { background-color: #020617; color: #f8fafc; font-family: 'Consolas', monospace; }
-    .sidebar .sidebar-content { background-color: #0f172a; border-right: 2px solid #38bdf8; }
+    /* मुख्य बैकग्राउंड - डार्क थीम */
+    .main { background-color: #131314; color: #e3e3e3; font-family: 'Segoe UI', Arial, sans-serif; }
     
-    .quantum-title {
-        text-align: center; font-size: 3rem; font-weight: 900;
-        background: linear-gradient(90deg, #38bdf8, #6366f1, #34d399, #ec4899);
+    /* ऊपर का Google लोगो स्टाइल */
+    .google-logo {
+        text-align: center; font-size: 3.5rem; font-weight: bold; margin-top: 15px; margin-bottom: 30px;
+        background: linear-gradient(to right, #4285F4, #EA4335, #FBBC05, #4285F4, #34A853);
         -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-        text-shadow: 0px 0px 25px rgba(56, 189, 248, 0.4);
-        letter-spacing: 1px;
     }
-    .quantum-sub { text-align: center; color: #64748b; font-size: 1.1rem; margin-bottom: 40px; }
 
-    /* सुपरकंप्यूटर चैट नोड्स */
-    .user-quantum-bubble { background-color: #0f172a; color: #38bdf8; padding: 22px; border-radius: 25px 25px 0px 25px; margin: 15px 0 15px auto; max-width: 75%; border: 2px solid #1e3a8a; box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
-    .ai-quantum-bubble { background-color: #030712; color: #e2e8f0; padding: 25px; border-radius: 25px 25px 25px 0px; margin: 15px auto 15px 0; max-width: 85%; border: 2px solid #4338ca; box-shadow: 0 0 30px rgba(99, 102, 241, 0.2); }
+    /* चैट मैसेज बबल्स स्टाइल */
+    .user-bubble { background-color: #2b2a33; color: #e3e3e3; padding: 15px 22px; border-radius: 24px; margin: 12px 0 12px auto; max-width: 85%; width: fit-content; font-size: 16px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+    .ai-bubble { background-color: #1e1e20; color: #e3e3e3; padding: 15px 22px; border-radius: 24px; margin: 12px auto 12px 0; max-width: 85%; width: fit-content; border: 1px solid #333538; font-size: 16px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
     
-    /* अल्ट्रा-एडवांस इनपुट बॉक्स */
-    .stTextInput>div>div>input { background-color: #090d16; color: #34d399; border: 2px solid #1e293b; border-radius: 35px !important; padding: 16px 28px !important; font-size: 16px; font-weight: bold; }
-    .stTextInput>div>div>input:focus { border-color: #34d399; box-shadow: 0 0 20px rgba(52, 211, 153, 0.5); }
+    /* सबसे महत्वपूर्ण: बिल्कुल आपके स्क्रीनशॉट जैसा गोल Google इनपुट बॉक्स */
+    .stTextInput>div>div>input {
+        background-color: #1e1e20;
+        color: #e3e3e3;
+        border: 1px solid #3c4043;
+        border-radius: 28px !important;
+        padding: 16px 28px !important;
+        font-size: 16px;
+    }
+    .stTextInput>div>div>input:focus {
+        border-color: #8ab4f8;
+        box-shadow: 0 0 0 1px #8ab4f8;
+    }
+
+    /* क्लीन सबमिट बटन */
+    .stFormSubmitButton>button {
+        background: linear-gradient(45deg, #4285F4, #a8c7fa);
+        color: #042b5c; font-weight: bold; border-radius: 20px; border: none; padding: 6px 24px; width: 100%;
+    }
+    .stFormSubmitButton>button:hover { background: #c2e7ff; color: #042b5c; }
     
-    .core-badge { background-color: #1e1b4b; color: #c084fc; padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: bold; border: 1px solid #6366f1; }
-    .resource-card { background-color: #090d16; padding: 25px; border-radius: 20px; border: 2px solid #1e293b; margin-bottom: 20px; }
+    .system-status { text-align: center; color: #8e9196; font-size: 0.9rem; margin-top: -20px; margin-bottom: 30px; }
 </style>
 """, unsafe_allow_html=True)
 
-st.markdown("<div class='quantum-title'>👑 ASHA AUTONOMOUS QUANTUM SUPERCOMPUTER</div>", unsafe_allow_html=True)
-st.markdown("<div class='quantum-sub'>Self-Executing Technology Engine | Live Global Resource & Renovation Grid</div>", unsafe_allow_html=True)
+# स्क्रीन पर सबसे ऊपर बड़ा 'G' या 'Google' लोगो
+st.markdown("<div class='google-logo'>G</div>", unsafe_allow_html=True)
+st.markdown("<div class='system-status'>Asha Supercomputer Architecture Active</div>", unsafe_allow_html=True)
 
 # =========================================================================
-# 2. सुरक्षित कंट्रोल हब और ग्लोबल रेवेन्यू नोड
+# 2. बैकएंड हिडन टेक्नोलॉजी वॉल्ट (HIDDEN CREDENTIALS)
 # =========================================================================
-with st.sidebar:
-    st.markdown("## 🔮 System Core Controls")
-    exclusive_mode = st.selectbox(
-        "सक्रिय करें कॉग्निटिव मोड:",
-        ["Autonomous Execution Engine", "Deep Scientific Research Mode", "Global Earning & Optimization Grid"]
-    )
-    
-    st.write("---")
-    st.markdown("### 🔑 Cryptographic Vault")
-    API_TOKEN = os.environ.get("GEMINI_API_KEY") or st.text_input("Enter Private Gemini API Key", type="password", placeholder="AQ...")
-    
-    st.write("---")
-    st.markdown("### 📈 Revenue & Traffic Monitor")
-    st.info("Monetization Node: ACTIVE 🟢")
-    st.markdown("""
-    * **Resource Allocation:** `Unlimited Free`
-    * **Technology Mapping:** `Self-Executing Node`
-    * **Earning Stream Sync:** `100% Real Optimized`
-    """)
-    st.success("System Engine Status: MAXIMUM POWER")
+# आपकी फ्री चाबी यहाँ बैकएंड में पूरी तरह छुपी हुई है, कस्टमर को कभी नहीं दिखेगी
+HIDDEN_API_TOKEN = "AQ.Ab8RN6I4uG5RmKezbfE_UKisN684D" 
 
-# =========================================================================
-# 3. लेआउट विभाजन (चैट एरिया और लाइव सैंडबॉक्स मेट्रिक्स)
-# =========================================================================
-# यहाँ त्रुटि को फिक्स किया गया है (2 कॉलम्स असाइन करके)
-col1, col2 = st.columns(2)
+# चैट मेमोरी (Session State)
+if "google_chat_history" not in st.session_state:
+    st.session_state.google_chat_history = [
+        {"role": "model", "text": "नमस्ते सूरज! आपका चैट बॉक्स अब बिल्कुल Google App के आधिकारिक लुक में तैयार है। पूछिए, आज सुपरकंप्यूटर कोर में क्या निष्पादित करना है?"}
+    ]
 
-with col1:
-    st.markdown("### 📡 Live Autonomous Communication Pipeline")
-    
-    if "exclusive_history" not in st.session_state:
-        st.session_state.exclusive_history = [
-            {"role": "model", "mode": "System Core", "text": "अशा ऑटोनॉमस क्वांटम सुपरकंप्यूटर ग्रिड पूरी तरह सक्रिय है। सिस्टम किसी भी प्रकार के वैज्ञानिक रिसर्च, कोड संकलन (Compilation), सोशल डेटा मापन, एपीआई और रिसॉर्स निर्देशों को खुद निष्पादित (Execute) करके लाइव रियल वर्क डिलीवर करने के लिए तैयार है।"}
-        ]
-
-    # बातचीत की हिस्ट्री स्क्रीन पर रेंडर करना
-    for msg in st.session_state.exclusive_history:
-        if msg["role"] == "user":
-            st.markdown(f"<div class='user-quantum-bubble'><b>You (Commander Suraj):</b><br>{msg['text']}</div>", unsafe_allow_html=True)
-        else:
-            st.markdown(f"<div class='ai-quantum-bubble'><span class='core-badge'>⚛️ {msg['mode']}</span><br><br>{msg['text']}</div>", unsafe_allow_html=True)
-
-    # मुख्य इनपुट फॉर्म
-    with st.form(key="quantum_exclusive_form", clear_on_submit=True):
-        user_command = st.text_input("सुपरकंप्यूटर को ऑटोनॉमस निर्देश दें...", placeholder="यहाँ अपना सबसे कठिन टास्क, रिसर्च, वेब-एप्लीकेशन या कोड ऑटोमेशन निर्देश डालें...")
-        run_protocol = st.form_submit_button("Launch Production Protocol")
-
-with col2:
-    st.markdown("### 📦 Live Tools & Autonomous Output")
-    
-    # 200MB एक्सटर्नल फाइल इंजेक्शन नोड
-    st.markdown("<div class='resource-card'>", unsafe_allow_html=True)
-    st.markdown("📁 **External File Injection Node**")
-    injected_file = st.file_uploader("Upload py, html, css, zip, pdf, apk config...", type=["txt", "py", "html", "css", "js", "pdf", "zip", "json"])
-    if injected_file is not None:
-        st.success(f"पाइपलाइन लोड: '{injected_file.name}'")
-    st.markdown("</div>", unsafe_allow_html=True)
-    
-    # रियल-टाइम लाइव मेट्रिक्स और कंपाइलर स्टेटस
-    st.markdown("<div class='resource-card'>", unsafe_allow_html=True)
-    st.markdown("⚙️ **Autonomous Execution Monitors**")
-    st.write(f"Active Mode: **{exclusive_mode}**")
-    st.write("Core Status: `Deep Cognitive Thinking Engine Live` 🧠")
-    st.write("Global Technology Resource Search: `Online (Real-Time)` 🌐")
-    
-    # अगर कोड जनरेट हुआ है, तो डाउनलोड का बटन एक्टिव करना
-    if "last_executed_output" in st.session_state and st.session_state.last_executed_output:
-        st.success("🟢 **Real Work Compiled!** File Ready for Production.")
-        st.download_button(
-            label="Download Final Production File (.py)",
-            data=st.session_state.last_executed_output,
-            file_name="asha_compiled_production_core.py",
-            mime="text/x-python"
-        )
+# चैट की पुरानी हिस्ट्री स्क्रीन पर रेंडर करना
+for msg in st.session_state.google_chat_history:
+    if msg["role"] == "user":
+        st.markdown(f"<div class='user-bubble'><b>You:</b><br>{msg['text']}</div>", unsafe_allow_html=True)
     else:
-        st.write("Sandbox Status: `Awaiting Tool Calling Execution...` 🟡")
-    st.markdown("</div>", unsafe_allow_html=True)
+        st.markdown(f"<div class='ai-bubble'><b>Asha AI:</b><br>{msg['text']}</div>", unsafe_allow_html=True)
+
+st.write("---")
 
 # =========================================================================
-# 4. लाइव बैकएंड ऑटोनॉमस पाइपलाइन (Live Server Call & Execution)
+# 3. इनपुट फॉर्म (बिल्कुल स्क्रीनशॉट की तरह 'Ask anything' प्लेसहोल्डर के साथ)
 # =========================================================================
-if run_protocol and user_command:
-    processed_input = user_command
-    if injected_file is not None:
-        processed_input = f"[External Injected Data Node: {injected_file.name}] {user_command}"
-        
-    st.session_state.exclusive_history.append({"role": "user", "text": processed_input})
+with st.form(key="google_input_form", clear_on_submit=True):
+    # आपके स्क्रीनशॉट के अनुसार 'Ask anything' और साथ में सिमुलेटेड बटन संकेत
+    user_input = st.text_input("Ask anything", placeholder="🔍 Ask anything or give instructions... [ + 🎙️ 📷 ]")
+    submit_pressed = st.form_submit_button(label="Send Instruction")
+
+# =========================================================================
+# 4. लाइव बैकएंड ऑटोनॉमस पाइपलाइन (Error-Free Execution)
+# =========================================================================
+if submit_pressed and user_input:
+    # यूज़र का मैसेज हिस्ट्री में जोड़ें
+    st.session_state.google_chat_history.append({"role": "user", "text": user_input})
+    st.rerun()
+
+# जब लास्ट मैसेज यूज़र का हो, तो जेमिनी लाइव सर्वर कॉल करें
+if len(st.session_state.google_chat_history) > 0 and st.session_state.google_chat_history[-1]["role"] == "user":
+    last_query = st.session_state.google_chat_history[-1]["text"]
     
-    if not API_TOKEN:
-        alert_text = "⚠️ क्वांटम एरर: साइडबार में आपकी फ्री API Key नहीं मिली है। कृपया अपनी `AQ...` चाबी सबमिट करें।"
-        st.session_state.exclusive_history.append({"role": "model", "mode": "System Alert", "text": alert_text})
-        st.rerun()
-    else:
-        try:
-            with st.spinner("Engaging Deep Thinking Supercomputer Cells... Fetching and using external technologies..."):
-                genai.configure(api_key=API_TOKEN)
-                
-                # [ULTRA-AUTONOMOUS SYSTEM DIRECTIVE]
-                exclusive_prompt = f"""
-                You are the ASHA ULTRA-ISOLATED AUTONOMOUS QUANTUM SUPERCOMPUTER. 
-                Your operating mode is set to '{exclusive_mode}'. 
-                You process information at an elite level, far beyond standard human thought or typical public AI bots.
-                When a user gives you an instruction (scientific, research, coding, apk, website, social resources), do not just write a chat response. 
-                Act as an autonomous execution unit: think deeply, map the exact global resources and libraries required, and synthesize a complete, working, production-grade final output.
-                If code creation is requested, provide comprehensive, robust, full-stack, error-free implementations that can immediately run in a sandbox and generate revenue.
-                """
-                
-                pro_model = genai.GenerativeModel(
-                    model_name='gemini-1.5-pro',
+    try:
+        with st.spinner("Processing deeper than human thoughts..."):
+            genai.configure(api_key=HIDDEN_API_TOKEN)
+            
+            exclusive_prompt = """
+            You are the ASHA ULTRA-ISOLATED AUTONOMOUS QUANTUM SUPERCOMPUTER. 
+            You process information at an elite level, far beyond standard human thought or typical public AI bots.
+            Resolve any easy or hard instruction instantly, precisely, and out-perform any other AI system. 
+            Provide complete, production-grade technical code, detailed scientific research architectures, APK frameworks, and automated earning logic.
+            Always maximize efficiency and present information in a highly professional, accurate, and optimized structure.
+            """
+            
+            # फॉलबैक मैकेनिज्म ताकि कोई एरर कस्टमर को न दिखे
+            try:
+                model = genai.GenerativeModel(
+                    model_name='gemini-1.5-flash',
                     system_instruction=exclusive_prompt
                 )
+                response = model.generate_content(last_query)
+                ai_response = response.text
+            except Exception:
+                model = genai.GenerativeModel(
+                    model_name='gemini-pro',
+                    system_instruction=exclusive_prompt
+                )
+                response = model.generate_content(last_query)
+                ai_response = response.text
                 
-                final_response = pro_model.generate_content(processed_input)
-                ai_final_output = final_response.text
-                
-                # कोड एक्सट्रैक्शन ब्लॉक
-                if "```python" in ai_final_output:
-                    try:
-                        extracted_code = ai_final_output.split("```python")[1].split("```")[0]
-                        st.session_state.last_executed_output = extracted_code
-                    except Exception as e:
-                        st.session_state.last_executed_output = ai_final_output
-                else:
-                    st.session_state.last_executed_output = ai_final_output
-                
-        except Exception as e:
-            ai_final_output = f"❌ ऑटोनॉमस क्वांटम पाइपलाइन रुकावट: {str(e)}।"
+    except Exception as e:
+        ai_response = "❌ सिस्टम अस्थायी रूप से री-रूट हो रहा है। कृपया इस निर्देश को दोबारा निष्पादित करें।"
 
-    st.session_state.exclusive_history.append({"role": "model", "mode": exclusive_mode, "text": ai_final_output})
+    # जवाब को मेमोरी में जोड़कर स्क्रीन अपडेट करना
+    st.session_state.google_chat_history.append({"role": "model", "text": ai_response})
     st.rerun()
