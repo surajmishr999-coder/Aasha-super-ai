@@ -4,7 +4,7 @@ import os
 import time
 
 # =========================================================================
-# 1. क्वांटम कोर पेज कॉन्फ़िगरेशन (ChatGPT / Gemini से बिल्कुल अलग और यूनिक)
+# 1. क्वांटम कोर पेज कॉन्फ़िगरेशन
 # =========================================================================
 st.set_page_config(
     page_title="Asha Quantum Autonomous Engine",
@@ -56,7 +56,6 @@ with st.sidebar:
     
     st.write("---")
     st.markdown("### 🔑 Cryptographic Vault")
-    # आपकी aistudio से जनरेट की हुई फ्री चाबी यहाँ काम करेगी
     API_TOKEN = os.environ.get("GEMINI_API_KEY") or st.text_input("Enter Private Gemini API Key", type="password", placeholder="AQ...")
     
     st.write("---")
@@ -105,7 +104,7 @@ with col2:
         st.success(f"पाइपलाइन लोड: '{injected_file.name}'")
     st.markdown("</div>", unsafe_allow_html=True)
     
-    # रियल-टाइम लाइव मेट्रिक्स और कंपाइलर स्टेटस (जो किसी दूसरे एआई में नहीं होता)
+    # रियल-टाइम लाइव मेट्रिक्स और कंपाइलर स्टेटस
     st.markdown("<div class='resource-card'>", unsafe_allow_html=True)
     st.markdown("⚙️ **Autonomous Execution Monitors**")
     st.write(f"Active Mode: **{exclusive_mode}**")
@@ -144,7 +143,7 @@ if run_protocol and user_command:
             with st.spinner("Engaging Deep Thinking Supercomputer Cells... Fetching and using external technologies..."):
                 genai.configure(api_key=API_TOKEN)
                 
-                # [ULTRA-AUTONOMOUS SYSTEM DIRECTIVE]: खुद सोचने और टूल्स इस्तेमाल करने का कड़ा निर्देश
+                # [ULTRA-AUTONOMOUS SYSTEM DIRECTIVE]
                 exclusive_prompt = f"""
                 You are the ASHA ULTRA-ISOLATED AUTONOMOUS QUANTUM SUPERCOMPUTER. 
                 Your operating mode is set to '{exclusive_mode}'. 
@@ -154,24 +153,26 @@ if run_protocol and user_command:
                 If code creation is requested, provide comprehensive, robust, full-stack, error-free implementations that can immediately run in a sandbox and generate revenue.
                 """
                 
-                # जेमिनी 1.5 प्रो मॉडल का इस्तेमाल जो बड़े कॉन्टेक्स्ट और डीप कोडिंग को समझने में सबसे माहिर है
                 pro_model = genai.GenerativeModel(
                     model_name='gemini-1.5-pro',
                     system_instruction=exclusive_prompt
                 )
                 
-                # असली रिस्पॉन्स जनरेट करना
                 final_response = pro_model.generate_content(processed_input)
                 ai_final_output = final_response.text
                 
-                # ऑटोमेशन: यदि एआई ने कोड ब्लॉक बनाया है, तो उसे राइट-साइड के डाउनलोडर充हब में लोड करना
+                # फिक्स किया हुआ कोड एक्सट्रैक्शन ब्लॉक (बिना किसी Indentation Error के)
                 if "```python" in ai_final_output:
                     try:
                         extracted_code = ai_final_output.split("```python")[1].split("```")[0]
                         st.session_state.last_executed_output = extracted_code
-                    except Exception:
+                    except Exception as e:
                         st.session_state.last_executed_output = ai_final_output
                 else:
                     st.session_state.last_executed_output = ai_final_output
                 
         except Exception as e:
+            ai_final_output = f"❌ ऑटोनॉमस क्वांटम पाइपलाइन रुकावट: {str(e)}।"
+
+    st.session_state.exclusive_history.append({"role": "model", "mode": exclusive_mode, "text": ai_final_output})
+    st.rerun()
