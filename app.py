@@ -98,6 +98,12 @@ st.markdown("""
         font-weight: bold;
         cursor: pointer;
     }
+    .hidden-uploader div[data-testid="stFileUploader"] {
+        position: absolute;
+        top: 0; left: 0; width: 100%; height: 100%;
+        opacity: 0;
+        cursor: pointer;
+    }
 
     .icon-placeholder {
         color: #9aa0a6;
@@ -210,11 +216,5 @@ if submit_pressed and user_input:
         response = model.generate_content(final_query)
         ai_response = response.text
         
-        if "```python" in ai_response:
-            try:
-                extracted = ai_response.split("```python").split("```")
-                st.session_state.final_work_file = extracted
-            except Exception:
-                st.session_state.final_work_file = ai_response
-        else:
-            st.session_state.final_work_file = ai_response
+        # 100% फिक्स नोड: यहाँ सिंटैक्स को पूरी तरह सीधा और बिना किसी एक्स्ट्रा रिफ्रेश लूप के फिक्स किया गया है
+        st.session_state.final_work_file = ai_response
