@@ -28,7 +28,7 @@ st.markdown("""
 </script>
 """, unsafe_allow_html=True)
 
-# 100% असली Google Search/Gemini ऐप जैसी हुबहू डार्क थीम CSS (सभी फीचर्स कंबाइंड)
+# 100% असली Google Search/Gemini ऐप जैसी हुबहू डार्क थीम CSS
 st.markdown("""
 <style>
     /* मुख्य बैकग्राउंड - डार्क थीम */
@@ -47,7 +47,7 @@ st.markdown("""
     .user-bubble { background-color: #2b2a33; color: #e3e3e3; padding: 15px 22px; border-radius: 24px; margin: 12px 0 12px auto; max-width: 85%; width: fit-content; font-size: 16px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
     .ai-bubble { background-color: #1e1e20; color: #e3e3e3; padding: 15px 22px; border-radius: 24px; margin: 12px auto 12px 0; max-width: 85%; width: fit-content; border: 1px solid #333538; font-size: 16px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
     
-    /* गोल सिंगल-लाइन इनपुट रैपर - हुबहू स्क्रीनशॉट जैसा */
+    /* गोल सिंगल-लाइन इनपुट रैपर */
     .input-wrapper {
         background-color: #1e1e20;
         border: 1px solid #3c4043;
@@ -71,7 +71,7 @@ st.markdown("""
 
     .stForm { border: none !important; padding: 0 !important; margin: 0 !important; }
 
-    /* असली गूगल का नीला सबमिट (तीर ⬆️) बटन जो आपके बॉक्स के अंदर ही फिक्स है */
+    /* असली गूगल का नीला सबमिट (तीर ⬆️) बटन */
     .stFormSubmitButton>button {
         background: #1a73e8 !important;
         color: #ffffff !important;
@@ -146,7 +146,7 @@ if "google_chat_history" not in st.session_state:
 if "final_work_file" not in st.session_state:
     st.session_state.final_work_file = None
 
-# चैट की पुरानी हिस्ट्री स्क्रीन पर रेंडर करना (यहाँ सिंटैक्स त्रुटि फिक्स की गई है)
+# चैट की पुरानी हिस्ट्री स्क्रीन पर रेंडर करना (यहाँ सिंटैक्स क्लोजर ब्रैकेट पूरी तरह फिक्स है)
 for msg in st.session_state.google_chat_history:
     if msg["role"] == "user":
         st.markdown(f"<div class='user-bubble'><b>You:</b><br>{msg['text']}</div>", unsafe_allow_html=True)
@@ -197,7 +197,7 @@ if uploaded_asset is not None:
     st.info(f"📎 फ़ाइल मैप हुई: '{uploaded_asset.name}' (वैश्विक नैनो सैंडबॉक्स पर लोड)")
 
 # =========================================================================
-# 4. लाइव बैकएंड ऑटोनॉमस पाइपलाइन (The Ultimate Multi-Feature Framework Core)
+# 4.实时 एआई निष्पादन इंजन (Live Execution Framework)
 # =========================================================================
 if submit_pressed and user_input:
     final_query = user_input
@@ -206,7 +206,7 @@ if submit_pressed and user_input:
     st.session_state.google_chat_history.append({"role": "user", "text": final_query})
     st.rerun()
 
-# मुख्य एआई एग्जीक्यूशन ब्लॉक
+# मुख्य एआई एग्जीक्यूशन ब्लॉक (बिना किसी पुराना लूप ब्लॉकिंग के)
 if len(st.session_state.google_chat_history) > 0 and st.session_state.google_chat_history[-1]["role"] == "user":
     last_query = st.session_state.google_chat_history[-1]["text"]
     
