@@ -118,7 +118,6 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# ऊपर का मुख्य इंटरफ़ेस डिस्प्ले
 st.markdown("<div class='google-logo'>G</div>", unsafe_allow_html=True)
 st.markdown("<div class='system-status'>⚙️ NANO-SCIENTIFIC AUTO-RENOVATION ENGINE: ACTIVE 🟢</div>", unsafe_allow_html=True)
 st.markdown("<div class='earning-status'>💰 REVENUE STREAM SYNCHRONIZER: ONLINE [SURAJ MISHRA ENTERPRISE]</div>", unsafe_allow_html=True)
@@ -185,18 +184,15 @@ if uploaded_asset is not None:
     st.info(f"📎 फ़ाइल मैप हुई: '{uploaded_asset.name}' (वैश्विक नैनो सैंडबॉक्स पर लोड)")
 
 # =========================================================================
-# 4. लाइव बैकएंड ऑटोनॉमस पाइपलाइन (The Ultimate Multi-Feature Framework Core)
+# 4. लाइव बैकएंड ऑटोनॉमस पाइपライン (लूप-फ्री और एरर-प्रूफ एक्जीक्यूशन)
 # =========================================================================
 if submit_pressed and user_input:
     final_query = user_input
     if uploaded_asset is not None:
         final_query = f"[Global Injected Asset Node: {uploaded_asset.name}] {user_input}"
+    
+    # यूजर इनपुट को हिस्ट्री में जोड़ना
     st.session_state.google_chat_history.append({"role": "user", "text": final_query})
-    st.rerun()
-
-# मुख्य एआई एग्जीक्यूशन ब्लॉक
-if len(st.session_state.google_chat_history) > 0 and st.session_state.google_chat_history[-1]["role"] == "user":
-    last_query = st.session_state.google_chat_history[-1]["text"]
     
     try:
         genai.configure(api_key=HIDDEN_API_TOKEN)
@@ -213,9 +209,14 @@ if len(st.session_state.google_chat_history) > 0 and st.session_state.google_cha
             model_name='gemini-1.5-flash',
             system_instruction=exclusive_prompt
         )
-        response = model.generate_content(last_query)
+        response = model.generate_content(final_query)
         ai_response = response.text
         
-        # कंपाइलर नोड फिक्स
+        # सिंटैक्स फिक्स: बिना किसी एक्स्ट्रा रिफ्रेश लूप के फाइल अलग करना
         if "```python" in ai_response:
             try:
+                extracted = ai_response.split("```python")[1].split("```")[0]
+                st.session_state.final_work_file = extracted
+            except Exception:
+                st.session_state.final_work_file = ai_response
+        else:
