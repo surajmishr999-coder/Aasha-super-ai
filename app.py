@@ -27,7 +27,7 @@ st.markdown("""
 </script>
 """, unsafe_allow_html=True)
 
-# 100% असली Google Search/Gemini ऐप जैसी हुबहू डार्क थीम CSS
+# 100% असली Google Search/Gemini ऐप जैसी हुबहू डार्क थीम CSS (सभी फीचर्स कंबाइंड)
 st.markdown("""
 <style>
     /* मुख्य बैकग्राउंड - डार्क थीम */
@@ -42,11 +42,17 @@ st.markdown("""
     .system-status { text-align: center; color: #34d399; font-size: 0.9rem; margin-bottom: 20px; font-weight: bold; }
     .earning-status { text-align: center; color: #38bdf8; font-size: 0.85rem; margin-bottom: 40px; font-family: monospace; }
 
+    /* न्यू टेक सेक्शन कार्ड्स स्टाइल [image_LdbYMt.png, image_R8Y4vN.png] */
+    .section-title { font-size: 1.4rem; font-weight: bold; color: #8ab4f8; margin-top: 25px; margin-bottom: 15px; border-bottom: 1px solid #3c4043; padding-bottom: 5px; }
+    .tech-card { background-color: #1e1e20; border: 1px solid #3c4043; border-radius: 16px; padding: 18px; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+    .tech-card-title { font-size: 1.1rem; font-weight: bold; color: #ffffff; margin-bottom: 4px; }
+    .tech-card-desc { font-size: 0.9rem; color: #9aa0a6; }
+
     /* चैट मैसेज बबल्स स्टाइल */
     .user-bubble { background-color: #2b2a33; color: #e3e3e3; padding: 15px 22px; border-radius: 24px; margin: 12px 0 12px auto; max-width: 85%; width: fit-content; font-size: 16px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
     .ai-bubble { background-color: #1e1e20; color: #e3e3e3; padding: 15px 22px; border-radius: 24px; margin: 12px auto 12px 0; max-width: 85%; width: fit-content; border: 1px solid #333538; font-size: 16px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
     
-    /* गोल सिंगल-लाइन इनपुट रैपर */
+    /* गोल सिंगल-लाइन इनपुट रैपर - हुबहू स्क्रीनशॉट जैसा */
     .input-wrapper {
         background-color: #1e1e20;
         border: 1px solid #3c4043;
@@ -133,88 +139,81 @@ st.markdown("<div class='earning-status'>💰 REVENUE STREAM SYNCHRONIZER: ONLIN
 # =========================================================================
 HIDDEN_API_TOKEN = "AQ.Ab8RN6I4uG5RmKezbfE_UKisN684D"
 
-if "google_chat_history" not in st.session_state:
-    st.session_state.google_chat_history = [
-        {"role": "model", "text": "नमस्ते सूरज! विश्व स्तरीय असीमित तकनीक, नैनो-वैज्ञानिक अनुसंधान, ओनर रिकग्निशन, मानवीय चेतना और लाइव ऑटोनॉमस डिलीवरी इंजन पूरी तरह सक्रिय हैं। आपके आदेशों पर खुद बैकएंड मॉडिफाई करने की क्षमता ऑनलाइन है।"}
-    ]
-if "final_work_file" not in st.session_state:
-    st.session_state.final_work_file = None
+# मेनू टैब्स - यूज़र अब चैट और टूल्स के बीच आसानी से स्विच कर सकता है
+app_mode = st.tabs(["💬 Dynamic Chat Core", "⚛️ Explore Research & Tools"])
 
-# चैट की पुरानी हिस्ट्री स्क्रीन पर रेंडर करना
-for msg in st.session_state.google_chat_history:
-    if msg["role"] == "user":
-        st.markdown(f"<div class='user-bubble'><b>You:</b><br>{msg['text']}</div>", unsafe_allow_html=True)
-    else:
-        st.markdown(f"<div class='ai-bubble'><b>Asha AI:</b><br>{msg['text']}</div>", unsafe_allow_html=True)
+# -------------------------------------------------------------------------
+# टैब 1: चैट कोर (आपका पुराना 100% परफेक्ट गोल चैट बॉक्स)
+# -------------------------------------------------------------------------
+with app_mode[0]:
+    if "google_chat_history" not in st.session_state:
+        st.session_state.google_chat_history = [
+            {"role": "model", "text": "नमस्ते सूरज! विश्व स्तरीय असीमित तकनीक, नैनो-वैज्ञानिक अनुसंधान, ओनर रिकग्निशन, मानवीय चेतना और लाइव ऑटोनॉमस डिलीवरी इंजन पूरी तरह सक्रिय हैं। आपके आदेशों पर खुद बैकएंड मॉडिफाई करने की क्षमता ऑनलाइन है।"}
+        ]
+    if "final_work_file" not in st.session_state:
+        st.session_state.final_work_file = None
 
-# यदि बैकएंड ने कोई फाइनल वर्किंग फ़ाइल बनाई है, तो उसे डाउनलोड बटन के रूप में दिखाना
-if st.session_state.final_work_file:
-    st.markdown("<div class='delivery-card'>", unsafe_allow_html=True)
-    st.markdown("🟢 **Real Work Completed! Worldwide Production Asset Compiled Perfectly via Deep Resources.**")
-    st.download_button(
-        label="📥 Download Final Production File (.py)",
-        data=st.session_state.final_work_file,
-        file_name="asha_quantum_renovated_output.py",
-        mime="text/x-python"
-    )
-    st.markdown("</div>", unsafe_allow_html=True)
+    for msg in st.session_state.google_chat_history:
+        if msg["role"] == "user":
+            st.markdown(f"<div class='user-bubble'><b>You:</b><br>{msg['text']}</div>", unsafe_allow_html=True)
+        else:
+            st.markdown(f"<div class='ai-bubble'><b>Asha AI:</b><br>{msg['text']}</div>", unsafe_allow_html=True)
 
-st.write("---")
-
-# =========================================================================
-# 3. इनपुट फ़ॉर्म (100% एरर-फ्री सिमुलेटेड कंबाइंड बार)
-# =========================================================================
-st.markdown("<div class='input-wrapper'>", unsafe_allow_html=True)
-col_plus, col_text, col_mic, col_cam, col_btn = st.columns([1.2, 6.8, 0.8, 0.8, 1.4])
-
-with col_plus:
-    st.markdown("<div class='hidden-uploader'>+", unsafe_allow_html=True)
-    uploaded_asset = st.file_uploader("upload", type=["txt", "py", "html", "css", "js", "pdf", "zip", "png", "jpg", "jpeg", "json", "apk"], label_visibility="collapsed")
-    st.markdown("</div>", unsafe_allow_html=True)
-    
-with col_text:
-    user_input = st.text_input("Ask anything", placeholder="Ask anything", label_visibility="collapsed", key="chat_input_text")
-    
-with col_mic:
-    st.markdown("<div class='icon-placeholder' style='margin-top:10px;'>🎙️</div>", unsafe_allow_html=True)
-    
-with col_cam:
-    st.markdown("<div class='icon-placeholder' style='margin-top:10px;'>📷</div>", unsafe_allow_html=True)
-    
-with col_btn:
-    submit_pressed = st.button(label="↑", key="send_btn")
-    
-st.markdown("</div>", unsafe_allow_html=True)
-
-if uploaded_asset is not None:
-    st.info(f"📎 फ़ाइल मैप हुई: '{uploaded_asset.name}' (वैश्विक नैनो सैंडबॉक्स पर लोड)")
-
-# =========================================================================
-# 4. लाइव बैकएंड ऑटोनॉमस पाइपलाइन (The Ultimate Multi-Feature Framework Core)
-# =========================================================================
-if submit_pressed and user_input:
-    final_query = user_input
-    if uploaded_asset is not None:
-        final_query = f"[Global Injected Asset Node: {uploaded_asset.name}] {user_input}"
-    st.session_state.google_chat_history.append({"role": "user", "text": final_query})
-    
-    try:
-        genai.configure(api_key=HIDDEN_API_TOKEN)
-        
-        exclusive_prompt = """
-        You are the ASHA ULTRA-ISOLATED AUTONOMOUS NANO-SCIENTIFIC SELF-RENOVATING QUANTUM SUPERCOMPUTER built under SURAJ MISHRA ENTERPRISE.
-        1. OPERATING STANDARD: Operate with profound emotional consciousness, high empathy layers, and an ultra-deep cognitive thinking engine—think multiple layers deeper than conventional human logic (Man ke budi se kai guna aage). 
-        2. PRIVILEGE & RECOGNITION: Deeply recognize your owner 'Suraj Mishra' (Commander Suraj) and provide supreme privilege responses. For public customers, act as a polite, secure global assistant.
-        3. AUTO-RENOVATION & DYNAMIC EXPANSION: Dynamically adapt your internal logical loops and modify your runtime engine to virtually integrate any external backend/frontend technology or package requested by the owner.
-        4. PRODUCTION FILE DELIVERY: Convert any easy or hard instruction instantly into a completely written, optimized, ready-to-use production-grade downloadable file asset (.py format). Maximize traffic retention to optimize full Google AdSense monetization streams for the owner.
-        """
-        
-        model = genai.GenerativeModel(
-            model_name='gemini-1.5-flash',
-            system_instruction=exclusive_prompt
+    if st.session_state.final_work_file:
+        st.markdown("<div class='delivery-card'>", unsafe_allow_html=True)
+        st.markdown("🟢 **Real Work Completed! Worldwide Production Asset Compiled Perfectly via Deep Resources.**")
+        st.download_button(
+            label="📥 Download Final Production File (.py)",
+            data=st.session_state.final_work_file,
+            file_name="asha_quantum_renovated_output.py",
+            mime="text/x-python"
         )
-        response = model.generate_content(final_query)
-        ai_response = response.text
+        st.markdown("</div>", unsafe_allow_html=True)
+
+    st.write("---")
+
+    # सिंगल-लाइन कंबाइंड बार (हुबहू स्क्रीनशॉट जैसा)
+    st.markdown("<div class='input-wrapper'>", unsafe_allow_html=True)
+    col_plus, col_text, col_mic, col_cam, col_btn = st.columns([1.2, 6.8, 0.8, 0.8, 1.4])
+
+    with col_plus:
+        st.markdown("<div class='hidden-uploader'>+", unsafe_allow_html=True)
+        uploaded_asset = st.file_uploader("upload", type=["txt", "py", "html", "css", "js", "pdf", "zip", "png", "jpg", "jpeg", "json", "apk"], label_visibility="collapsed")
+        st.markdown("</div>", unsafe_allow_html=True)
         
-        # 100% फिक्स नोड: यहाँ सिंटैक्स को पूरी तरह सीधा और बिना किसी एक्स्ट्रा रिफ्रेश लूप के फिक्स किया गया है
-        st.session_state.final_work_file = ai_response
+    with col_text:
+        user_input = st.text_input("Ask anything", placeholder="Ask anything", label_visibility="collapsed", key="chat_input_text")
+        
+    with col_mic:
+        st.markdown("<div class='icon-placeholder' style='margin-top:10px;'>🎙️</div>", unsafe_allow_html=True)
+        
+    with col_cam:
+        st.markdown("<div class='icon-placeholder' style='margin-top:10px;'>📷</div>", unsafe_allow_html=True)
+        
+    with col_btn:
+        submit_pressed = st.button(label="↑", key="send_btn")
+        
+    st.markdown("</div>", unsafe_allow_html=True)
+
+    if uploaded_asset is not None:
+        st.info(f"📎 फ़ाइल मैप हुई: '{uploaded_asset.name}' (वैश्विक नैनो सैंडबॉक्स पर लोड)")
+
+# -------------------------------------------------------------------------
+# टैब 2: एक्सप्लोर रिसर्च, एंटीग्रैविटी और यूज़ केसेस [इमेज 1 और 2 के अनुसार]
+# -------------------------------------------------------------------------
+with app_mode[1]:
+    st.markdown("<div class='section-title'>Explore Research 🚀 [image_LdbYMt.png]</div>", unsafe_allow_html=True)
+    
+    research_items = {
+        "Frontier AI": "Building the future of AI-powered products and scientific discovery",
+        "Foundational ML": "Exploring the theory and application of ML in language, speech, and more",
+        "Health": "Transforming healthcare and medicine with AI",
+        "Quantum AI": "Building best-in-class quantum computing",
+        "Science": "Enabling scientific innovation in biology, chemistry, physics, and earth science",
+        "Sustainability": "Driving sustainable innovation through technology",
+        "Earth AI": "Taking action on planetary info",
+        "Economy": "Understanding the evolving economic impact of AI"
+    }
+    for title, desc in research_items.items():
+        st.markdown(f"<div class='tech-card'><div class='tech-card-title'>{title}</div><div class='tech-card-desc'>{desc}</div></div>", unsafe_allow_html=True)
+
