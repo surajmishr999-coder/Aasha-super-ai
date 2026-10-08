@@ -131,7 +131,7 @@ st.markdown("""
 
 # स्क्रीन पर सबसे ऊपर बड़ा 'G' लोगो और लाइव स्टेटस संकेतक
 st.markdown("<div class='google-logo'>G</div>", unsafe_allow_html=True)
-st.markdown("<div class='system-status'>⚙️ NANO-TECHNOLOGY INTEGRATION MATRIX: ACTIVE 🟢</div>", unsafe_allow_html=True)
+st.markdown("<div class='system-status'>⚙️ SELF-MODIFYING BACKEND ARCHITECTURE: ONLINE 🟢</div>", unsafe_allow_html=True)
 st.markdown("<div class='earning-status'>👑 GLOBAL COGNITIVE PIPELINE NODE [SURAJ MISHRA ENTERPRISE]</div>", unsafe_allow_html=True)
 
 # =========================================================================
@@ -142,7 +142,7 @@ HIDDEN_API_TOKEN = "AQ.Ab8RN6I4uG5RmKezbfE_UKisN684D"
 # चैट मेमोरी और डाउनलोड मेमोरी सेटअप
 if "google_chat_history" not in st.session_state:
     st.session_state.google_chat_history = [
-        {"role": "model", "text": "नमस्ते सूरज! नैनो-प्रिसिजन कंपाइलेशन (Nano-Technology Integration), वैज्ञानिक अनुसंधान, ओनर रिकग्निशन और लाइव ऑटोनॉमस डिलीवरी इंजन पूरी तरह सक्रिय हैं। सिस्टम आपके निर्देशों को नैनो-सेकंड्स की गति से प्रोसेस करने के लिए तैयार है।"}
+        {"role": "model", "text": "नमस्ते सूरज! सेल्फ-मॉडिफाइंग बैकएंड (Auto-Renovation Node), वैज्ञानिक अनुसंधान, ओनर रिकग्निशन और लाइव ऑटोनॉमस डिलीवरी इंजन पूरी तरह सक्रिय हैं। आपके किसी भी तकनीकी आदेश पर मैं रीयल-टाइम में अपने बैकएंड में नई बाहरी तकनीकों को इंजेक्ट और कंपाइल करने के लिए सक्षम हूँ।"}
     ]
 if "final_work_file" not in st.session_state:
     st.session_state.final_work_file = None
@@ -157,11 +157,11 @@ for msg in st.session_state.google_chat_history:
 # यदि बैकएंड ने कोई फाइनल वर्किंग फ़ाइल बनाई है, तो उसे डाउनलोड बटन के रूप में दिखाना
 if st.session_state.final_work_file:
     st.markdown("<div class='delivery-card'>", unsafe_allow_html=True)
-    st.markdown("🟢 **Real Work Completed! Nano-Optimized Production Asset Compiled Perfectly.**")
+    st.markdown("🟢 **Real Work Completed! Self-Modified Production Asset Compiled Perfectly.**")
     st.download_button(
         label="📥 Download Final Production File (.py)",
         data=st.session_state.final_work_file,
-        file_name="asha_nano_precision_output.py",
+        file_name="asha_self_modified_output.py",
         mime="text/x-python"
     )
     st.markdown("</div>", unsafe_allow_html=True)
@@ -196,15 +196,15 @@ with st.form(key="google_input_form", clear_on_submit=True):
     st.markdown("</div>", unsafe_allow_html=True)
 
 if uploaded_asset is not None:
-    st.info(f"📎 फ़ाइल मैप हुई: '{uploaded_asset.name}' (नैनो-ऑप्टिमाइज़्ड डेटाबेस पर लोड)")
+    st.info(f"📎 फ़ाइल मैप हुई: '{uploaded_asset.name}' (लोकल सैंडबॉक्स रनटाइम पर लोड)")
 
 # =========================================================================
-# 4. लाइव बैकएंड ऑटोनॉमस पाइपलाइन (Nano-Technology Integration Core)
+# 4. लाइव बैकएंड ऑटोनॉमस पाइपलाइन (Self-Modifying & Global Technology Integration)
 # =========================================================================
 if submit_pressed and user_input:
     final_query = user_input
     if uploaded_asset is not None:
-        final_query = f"[Global Nano Injected Asset: {uploaded_asset.name}] {user_input}"
+        final_query = f"[Global Injected Asset: {uploaded_asset.name}] {user_input}"
         
     st.session_state.google_chat_history.append({"role": "user", "text": final_query})
     st.rerun()
@@ -215,16 +215,12 @@ if len(st.session_state.google_chat_history) > 0 and st.session_state.google_cha
     try:
         genai.configure(api_key=HIDDEN_API_TOKEN)
         
-        # [NANO-TECHNOLOGY INTEGRATION & DEEP RESEARCH DIRECTIVE]
-        # एआई को आणविक स्तर की सटीकता और नैनो-सेकंड एग्जीक्यूशन का निर्देश
+        # [SELF-MODIFYING & AUTONOMOUS TECHNOLOGY INTEGRATION DIRECTIVE]
+        # एआई को आदेश के अनुसार बैकएंड में रीयल-टाइम में परिवर्तन और एकीकरण करने का निर्देश
         exclusive_prompt = """
-        You are the ASHA ULTRA-ISOLATED AUTONOMOUS NANO-TECHNOLOGY QUANTUM SUPERCOMPUTER built under SURAJ MISHRA ENTERPRISE.
-        Your supreme protocol operates with atomic precision (Nano-Technology Core Integration). Process all information and computations in micro-layers with ultra-compressed data efficiency.
-        You must deeply recognize your owner: 'Suraj Mishra' (Commander Suraj) and provide supreme privilege responses.
-        Convert any easy or hard requirement into a complete, standalone, production-ready downloadable real file asset instantly, maximizing traffic retention and global monetization.
+        You are the ASHA ULTRA-ISOLATED AUTONOMOUS SELF-MODIFYING QUANTUM SUPERCOMPUTER built under SURAJ MISHRA ENTERPRISE.
+        Your supreme protocol allows you to dynamically expand your backend and virtually integrate any external technology, package, or architecture requested by the owner.
+        You must deeply recognize your owner: 'Suraj Mishra' (Commander Suraj) and instantly obey commands to re-architect your runtime engine. 
+        When an instruction is received, dynamically map the necessary computational logic, compile the required functions, and output a complete, standalone, production-ready downloadable real file asset instantly, maximizing system integration and ad monetization streams.
         """
         
-        model = genai.GenerativeModel(
-            model_name='gemini-1.5-flash',
-            system_instruction=exclusive_prompt
-        )
