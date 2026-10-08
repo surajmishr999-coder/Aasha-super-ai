@@ -1,219 +1,484 @@
-import streamlit as st
-import google.generativeai as genai
+"""
+Asha AI v2 - Streamlit + Google Gemini
+Features: chat (streaming) | file + voice input | owner login | paid pass via UPI
+          (signed codes, no database) | real downloads (.md / .docx / .zip / code)
+Run: streamlit run asha_app.py
+"""
+import hashlib
+import hmac
+import io
 import os
+import re
+import secrets as pysecrets
+import time
+import urllib.parse
+import zipfile
 
-# =========================================================================
-# 1. गूगल ऐप लेआउट एवं ऑटोमेटेड अर्निंग्स (Google AdSense Integration)
-# =========================================================================
-st.set_page_config(
-    page_title="Asha Google AI Engine",
-    page_icon="👑",
-    layout="centered", 
-    initial_sidebar_state="collapsed"
+import requests
+import streamlit as st
+from google import genai
+from google.genai import types
+
+st.set_page_config(page_title="Asha AI", page_icon="🤖", layout="centered")
+
+
+# ------------------------------------------------------------------
+# Config (sab kuch secrets se - code me kabhi key/password nahi)
+# ------------------------------------------------------------------
+def get_secret(name: str, default: str = "") -> str:
+    try:
+        return str(st.secrets[name])
+    except Exception:
+        return os.getenv(name, default)
+
+
+API_KEY = get_secret("GEMINI_API_KEY")
+MODEL_PRO = get_secret("GEMINI_MODEL_PRO", "gemini-3.1-pro-preview")   # sabse powerful
+MODEL_FAST = get_secret("GEMINI_MODEL_FAST", "gemini-flash-latest")     # tez + sasta
+OWNER_NAME = get_secret("OWNER_NAME", "Suraj Mishra")
+OWNER_PASSWORD_HASH = get_secret("OWNER_PASSWORD_HASH")  # sha256 hex
+TOKEN_SECRET = get_secret("TOKEN_SECRET")                # random long string
+UPI_ID = get_secret("UPI_ID")
+MERCHANT_NAME = get_secret("MERCHANT_NAME", "Asha AI")
+OWNER_CONTACT = get_secret("OWNER_CONTACT", "owner")     # WhatsApp/phone for sending payment proof
+RZP_ID = get_secret("RAZORPAY_KEY_ID")                   # auto payment verification
+RZP_SECRET = get_secret("RAZORPAY_KEY_SECRET")
+
+LIMITS = {"free": 15, "paid": 300, "owner": None}        # messages per session
+PLANS = {
+    "Weekly (7 din) - ₹149": (149, 7),
+    "3 Months - ₹499": (499, 90),
+    "Yearly - ₹1999": (1999, 365),
+}
+MAX_TEXT_CHARS = 100_000
+MAX_HISTORY = 30
+
+BASE_PROMPT = f"""
+You are Asha AI, a helpful, honest AI assistant built by {OWNER_NAME}.
+- Reply in the user's language (Hindi, English or Hinglish).
+- Give clear, correct, practical answers. For code, give complete working code in fenced blocks.
+- Be honest: you cannot send emails, apply for jobs, make payments or access
+  anyone's Google Drive. Never claim to have done actions you cannot do. If unsure, say so.
+- Refuse requests that help with hacking, fraud, malware or harming others.
+"""
+
+st.markdown(
+    """
+    <style>
+    .block-container { max-width: 780px; padding-top: 1.5rem; }
+    h1 { text-align: center; }
+    .badge { display:inline-block; padding:3px 12px; border-radius:20px; font-size:13px;
+             font-weight:600; border:1px solid #38bdf8; color:#38bdf8; }
+    </style>
+    """,
+    unsafe_allow_html=True,
 )
 
-# [AUTOMATED EARNINGS NODE]: बैकएंड में आपकी गूगल एडसेंस और अर्निंग स्क्रिप्ट्स का इंजेक्शन
-st.markdown("""
-<script async src="https://googlesyndication.com"
-     crossorigin="anonymous"></script>
-<ins class="adsbygoogle"
-     style="display:block"
-     data-ad-client="ca-pub-surajmishr999"
-     data-ad-slot="auto"
-     data-ad-format="auto"
-     data-full-width-responsive="true"></ins>
-<script>
-     (adsbygoogle = window.adsbygoogle || []).push({});
-</script>
-""", unsafe_allow_html=True)
+if not API_KEY:
+    st.error("GEMINI_API_KEY set nahi hai. `.streamlit/secrets.toml` dekhiye.")
+    st.stop()
 
-# 100% असली Google Search/Gemini ऐप जैसी हुबहू डार्क थीम CSS (सभी फीचर्स कंबाइंड)
-st.markdown("""
-<style>
-    /* मुख्य बैकग्राउंड - डार्क थीम */
-    .main { background-color: #131314; color: #e3e3e3; font-family: 'Segoe UI', Arial, sans-serif; }
-    
-    /* ऊपर का Google लोगो स्टाइल */
-    .google-logo {
-        text-align: center; font-size: 3.5rem; font-weight: bold; margin-top: 40px; margin-bottom: 5px;
-        background: linear-gradient(to right, #4285F4, #EA4335, #FBBC05, #4285F4, #34A853);
-        -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-    }
-    .system-status { text-align: center; color: #34d399; font-size: 0.9rem; margin-bottom: 20px; font-weight: bold; }
-    .earning-status { text-align: center; color: #38bdf8; font-size: 0.85rem; margin-bottom: 40px; font-family: monospace; }
 
-    /* न्यू टेक सेक्शन कार्ड्स स्टाइल [image_LdbYMt.png, image_R8Y4vN.png] */
-    .section-title { font-size: 1.4rem; font-weight: bold; color: #8ab4f8; margin-top: 25px; margin-bottom: 15px; border-bottom: 1px solid #3c4043; padding-bottom: 5px; }
-    .tech-card { background-color: #1e1e20; border: 1px solid #3c4043; border-radius: 16px; padding: 18px; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
-    .tech-card-title { font-size: 1.1rem; font-weight: bold; color: #ffffff; margin-bottom: 4px; }
-    .tech-card-desc { font-size: 0.9rem; color: #9aa0a6; }
+@st.cache_resource
+def get_client(key: str):
+    return genai.Client(api_key=key)
 
-    /* चैट मैसेज बबल्स स्टाइल */
-    .user-bubble { background-color: #2b2a33; color: #e3e3e3; padding: 15px 22px; border-radius: 24px; margin: 12px 0 12px auto; max-width: 85%; width: fit-content; font-size: 16px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
-    .ai-bubble { background-color: #1e1e20; color: #e3e3e3; padding: 15px 22px; border-radius: 24px; margin: 12px auto 12px 0; max-width: 85%; width: fit-content; border: 1px solid #333538; font-size: 16px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
-    
-    /* गोल सिंगल-लाइन इनपुट रैपर - हुबहू स्क्रीनशॉट जैसा */
-    .input-wrapper {
-        background-color: #1e1e20;
-        border: 1px solid #3c4043;
-        border-radius: 30px;
-        padding: 6px 12px;
-        display: flex;
-        align-items: center;
-        width: 100%;
-        margin-top: 20px;
-    }
 
-    /* इनपुट बॉक्स के अंदर का इनपुट field */
-    .stTextInput>div>div>input {
-        background-color: transparent !important;
-        color: #e3e3e3 !important;
-        border: none !important;
-        box-shadow: none !important;
-        padding: 10px 10px 10px 5px !important;
-        font-size: 16px;
-    }
+# ------------------------------------------------------------------
+# Auth + paid pass (stateless signed codes)
+# ------------------------------------------------------------------
+def sha256_hex(s: str) -> str:
+    return hashlib.sha256(s.encode()).hexdigest()
 
-    /* असली गूगल का नीला सबमिट (तीर ⬆️) बटन */
-    .stButton>button {
-        background: #1a73e8 !important;
-        color: #ffffff !important;
-        font-size: 18px !important;
-        border-radius: 50% !important;
-        width: 44px !important;
-        height: 44px !important;
-        padding: 0 !important;
-        border: none !important;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-        display: flex; align-items: center; justify-content: center;
-    }
-    .stButton>button:hover { background: #1557b0 !important; }
 
-    /* प्लस बटन के अंदर छिपे स्ट्रीमलिट फ़ाइल अपलोडर को व्यवस्थित करना */
-    .hidden-uploader {
-        position: relative;
-        width: 40px;
-        height: 40px;
-        background-color: #303134;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: #8ab4f8;
-        font-size: 22px;
-        font-weight: bold;
-        cursor: pointer;
-    }
-    .hidden-uploader div[data-testid="stFileUploader"] {
-        position: absolute;
-        top: 0; left: 0; width: 100%; height: 100%;
-        opacity: 0;
-        cursor: pointer;
-    }
+def check_owner_password(pw: str) -> bool:
+    if not OWNER_PASSWORD_HASH:
+        return False
+    return hmac.compare_digest(sha256_hex(pw), OWNER_PASSWORD_HASH.lower())
 
-    .icon-placeholder {
-        color: #9aa0a6;
-        font-size: 20px;
-        margin: 0 5px;
-        cursor: pointer;
-    }
-    
-    /* डाउनलोड कार्ड हब */
-    .delivery-card {
-        background-color: #0f172a;
-        padding: 20px;
-        border-radius: 16px;
-        border: 2px solid #34d399;
-        margin-top: 15px;
-        box-shadow: 0px 0px 15px rgba(52, 211, 153, 0.2);
-    }
-</style>
-""", unsafe_allow_html=True)
 
-st.markdown("<div class='google-logo'>G</div>", unsafe_allow_html=True)
-st.markdown("<div class='system-status'>⚙️ NANO-SCIENTIFIC AUTO-RENOVATION ENGINE: ACTIVE 🟢</div>", unsafe_allow_html=True)
-st.markdown("<div class='earning-status'>💰 REVENUE STREAM SYNCHRONIZER: ONLINE [SURAJ MISHRA ENTERPRISE]</div>", unsafe_allow_html=True)
+def _sign(payload: str) -> str:
+    return hmac.new(TOKEN_SECRET.encode(), payload.encode(), hashlib.sha256).hexdigest()[:14]
 
-# =========================================================================
-# 2. बैकएंड हिडन टेक्नोलॉजी वॉल्ट (PERMANENT FIXED FULL API KEY)
-# =========================================================================
-HIDDEN_API_TOKEN = "AQ.Ab8RN6I4uG5RmKezbfE_UKisN684D"
 
-# मेनू टैब्स - यूज़र अब चैट और टूल्स के बीच आसानी से स्विच कर सकता है
-app_mode = st.tabs(["💬 Dynamic Chat Core", "⚛️ Explore Research & Tools"])
+def make_code(days: int) -> str:
+    expiry = int(time.time()) + days * 86400
+    payload = f"{days}.{expiry}.{pysecrets.token_hex(3)}"
+    return f"ASHA-{payload}-{_sign(payload)}"
 
-# -------------------------------------------------------------------------
-# टैब 1: चैट कोर (आपका पुराना 100% परफेक्ट गोल चैट बॉक्स)
-# -------------------------------------------------------------------------
-with app_mode[0]:
-    if "google_chat_history" not in st.session_state:
-        st.session_state.google_chat_history = [
-            {"role": "model", "text": "नमस्ते सूरज! विश्व स्तरीय असीमित तकनीक, नैनो-वैज्ञानिक अनुसंधान, ओनर रिकग्निशन, मानवीय चेतना और लाइव ऑटोनॉमस डिलीवरी इंजन पूरी तरह सक्रिय हैं। आपके आदेशों पर खुद बैकएंड मॉडिफाई करने की क्षमता ऑनलाइन है।"}
-        ]
-    if "final_work_file" not in st.session_state:
-        st.session_state.final_work_file = None
 
-    for msg in st.session_state.google_chat_history:
-        if msg["role"] == "user":
-            st.markdown(f"<div class='user-bubble'><b>You:</b><br>{msg['text']}</div>", unsafe_allow_html=True)
+def redeem_code(code: str):
+    """Return expiry timestamp if valid, else None."""
+    if not TOKEN_SECRET:
+        return None
+    parts = code.strip().split("-")
+    if len(parts) != 3 or parts[0] != "ASHA":
+        return None
+    payload, sig = parts[1], parts[2]
+    if not hmac.compare_digest(_sign(payload), sig):
+        return None
+    try:
+        expiry = int(payload.split(".")[1])
+    except Exception:
+        return None
+    return expiry if expiry > time.time() else None
+
+
+# ------------------------------------------------------------------
+# Razorpay Payment Links (real auto-verification by polling the API)
+# ------------------------------------------------------------------
+@st.cache_resource
+def redeemed_ids() -> set:
+    return set()  # server-wide, best-effort replay protection
+
+
+def rzp_create_link(amount_inr: int, days: int, label: str) -> dict:
+    r = requests.post(
+        "https://api.razorpay.com/v1/payment_links",
+        auth=(RZP_ID, RZP_SECRET),
+        json={
+            "amount": amount_inr * 100,
+            "currency": "INR",
+            "description": f"Asha AI {label}",
+            "reference_id": f"asha-{int(time.time())}-{pysecrets.token_hex(3)}",
+            "notes": {"days": str(days)},
+            "reminder_enable": False,
+        },
+        timeout=20,
+    )
+    r.raise_for_status()
+    d = r.json()
+    return {"id": d["id"], "url": d["short_url"], "days": days, "amount": amount_inr}
+
+
+def rzp_is_paid(pending: dict) -> bool:
+    r = requests.get(
+        f"https://api.razorpay.com/v1/payment_links/{pending['id']}",
+        auth=(RZP_ID, RZP_SECRET),
+        timeout=20,
+    )
+    r.raise_for_status()
+    d = r.json()
+    return d.get("status") == "paid" and int(d.get("amount_paid", 0)) >= pending["amount"] * 100
+
+
+# ------------------------------------------------------------------
+# Session state
+# ------------------------------------------------------------------
+ss = st.session_state
+ss.setdefault("messages", [])
+ss.setdefault("used", 0)
+ss.setdefault("tier", "free")
+ss.setdefault("paid_until", 0)
+ss.setdefault("uploader_key", 0)
+ss.setdefault("fails", 0)
+ss.setdefault("pending", None)
+ss.setdefault("last_code", "")
+
+if ss.tier == "paid" and time.time() > ss.paid_until:
+    ss.tier = "free"
+
+# ------------------------------------------------------------------
+# Header
+# ------------------------------------------------------------------
+st.title("🤖 Asha AI")
+tier_label = {"free": "Free", "paid": "Premium", "owner": f"Owner · {OWNER_NAME}"}[ss.tier]
+limit = LIMITS[ss.tier]
+usage = f"{ss.used}/{limit}" if limit else f"{ss.used} (unlimited)"
+st.markdown(
+    f"<p style='text-align:center'><span class='badge'>{tier_label}</span> "
+    f"&nbsp; Messages: {usage}</p>",
+    unsafe_allow_html=True,
+)
+
+# ------------------------------------------------------------------
+# Sidebar
+# ------------------------------------------------------------------
+with st.sidebar:
+    st.header("📎 Attach")
+    uploaded = st.file_uploader(
+        "File (agle message ke saath jaayegi)",
+        type=["txt", "py", "html", "css", "js", "json", "csv", "md", "pdf", "png", "jpg", "jpeg", "webp"],
+        key=f"up_{ss.uploader_key}",
+    )
+    audio = None
+    if hasattr(st, "audio_input"):
+        audio = st.audio_input("🎙️ Voice (record karke message likhein)", key=f"au_{ss.uploader_key}")
+    with st.expander("📷 Camera se photo"):
+        cam = st.camera_input("Photo lein", key=f"cam_{ss.uploader_key}")
+    use_web = st.toggle("🌐 Live web search (Google)", value=False,
+                        help="ON karne par jawab asli internet search se aate hain, sources ke saath.")
+    can_pro = ss.tier in ("paid", "owner")
+    pick = st.radio(
+        "🧠 AI model",
+        ["Pro - sabse powerful", "Fast - jaldi jawab"],
+        index=0 if can_pro else 1,
+        disabled=not can_pro,
+        key=f"model_{ss.tier}",
+        help="Pro model Premium aur Owner ke liye hai.",
+    )
+    chosen_model = MODEL_PRO if (can_pro and pick.startswith("Pro")) else MODEL_FAST
+    st.caption(f"Model: `{chosen_model}`")
+
+    st.divider()
+
+    # ---- Premium pass ----
+    if ss.tier == "free":
+        with st.expander("💎 Premium pass lein"):
+            plan = st.selectbox("Plan", list(PLANS.keys()))
+            amount, days = PLANS[plan]
+            if RZP_ID and RZP_SECRET:
+                # REAL auto-verified payment
+                if st.button(f"₹{amount} pay karein (auto-activate)"):
+                    try:
+                        ss.pending = rzp_create_link(amount, days, plan)
+                    except Exception as e:
+                        st.error(f"Payment link nahi ban paya: {e}")
+                pend = ss.pending
+                if pend:
+                    st.markdown(f"👉 [Payment page kholein (₹{pend['amount']})]({pend['url']})")
+                    if st.button("✅ Payment ho gaya - check karein"):
+                        try:
+                            if pend["id"] in redeemed_ids():
+                                st.error("Ye payment pehle hi use ho chuka hai.")
+                            elif rzp_is_paid(pend):
+                                redeemed_ids().add(pend["id"])
+                                ss.tier = "paid"
+                                ss.paid_until = time.time() + pend["days"] * 86400
+                                ss.pending = None
+                                ss.last_code = make_code(pend["days"]) if TOKEN_SECRET else ""
+                                st.rerun()
+                            else:
+                                st.info("Abhi payment nahi mila. Pay karke 10-20 second baad dobara check karein.")
+                        except Exception as e:
+                            st.error(f"Check nahi ho paya: {e}")
+            elif UPI_ID:
+                # Manual fallback (owner verifies in bank app)
+                upi_link = (
+                    f"upi://pay?pa={UPI_ID}&pn={urllib.parse.quote(MERCHANT_NAME)}"
+                    f"&am={amount}.00&cu=INR&tn={urllib.parse.quote('Asha AI pass')}"
+                )
+                st.markdown(f"[📲 UPI se ₹{amount} pay karein]({upi_link})")
+                try:
+                    import qrcode
+
+                    buf = io.BytesIO()
+                    qrcode.make(upi_link).save(buf, format="PNG")
+                    st.image(buf.getvalue(), width=200, caption=f"UPI: {UPI_ID}")
+                except Exception:
+                    st.code(UPI_ID, language=None)
+                st.caption(
+                    f"Payment ke baad screenshot/UTR **{OWNER_CONTACT}** ko bhejein. "
+                    "Verify hote hi aapko ek access code milega."
+                )
+            else:
+                st.info("Payment abhi set nahi hai.")
+    elif ss.tier == "paid" and ss.last_code:
+        st.success("Premium active ✅")
+        st.caption("Ye access code save kar lein - refresh ke baad dobara daalne par premium wapas aa jayega:")
+        st.code(ss.last_code, language=None)
+
+    if ss.tier != "owner":
+        code_in = st.text_input("Access code", placeholder="ASHA-...")
+        if st.button("Code lagayein"):
+            exp = redeem_code(code_in)
+            if exp:
+                ss.tier, ss.paid_until = "paid", exp
+                st.success("Premium active! 🎉")
+                st.rerun()
+            else:
+                st.error("Code galat ya expire ho gaya hai.")
+
+        with st.expander("🔑 Owner login"):
+            if not OWNER_PASSWORD_HASH:
+                st.caption("OWNER_PASSWORD_HASH set nahi hai.")
+            else:
+                pw = st.text_input("Password", type="password", key="ownerpw")
+                if st.button("Login"):
+                    if ss.fails >= 5:
+                        st.error("Bahut zyada galat koshishein. Baad me try karein.")
+                    elif check_owner_password(pw):
+                        ss.tier, ss.fails = "owner", 0
+                        st.rerun()
+                    else:
+                        ss.fails += 1
+                        st.error("Galat password.")
+    else:
+        with st.expander("🛠️ Admin: code banayein", expanded=False):
+            if not TOKEN_SECRET:
+                st.warning("TOKEN_SECRET set karein, tabhi codes ban payenge.")
+            else:
+                p = st.selectbox("Plan", list(PLANS.keys()), key="adminplan")
+                if st.button("Code generate karein"):
+                    st.code(make_code(PLANS[p][1]), language=None)
+                    st.caption("Ye code sirf payment verify hone ke baad customer ko bhejein.")
+        if st.button("Logout"):
+            ss.tier = "free"
+            st.rerun()
+
+    st.divider()
+    if st.button("🗑️ Chat clear"):
+        ss.messages, ss.used = [], 0
+        st.rerun()
+
+
+# ------------------------------------------------------------------
+# Gemini helpers
+# ------------------------------------------------------------------
+TEXT_EXT = (".txt", ".py", ".html", ".css", ".js", ".json", ".csv", ".md")
+
+
+def build_parts(text: str, file, audio_file, cam_file=None):
+    parts, notes = [], []
+    if file is not None:
+        name, data = file.name, file.getvalue()
+        if name.lower().endswith(TEXT_EXT):
+            body = data.decode("utf-8", errors="replace")[:MAX_TEXT_CHARS]
+            text += f"\n\n--- File: {name} ---\n{body}"
+        elif name.lower().endswith(".pdf"):
+            parts.append(types.Part.from_bytes(data=data, mime_type="application/pdf"))
         else:
-            st.markdown(f"<div class='ai-bubble'><b>Asha AI:</b><br>{msg['text']}</div>", unsafe_allow_html=True)
+            parts.append(types.Part.from_bytes(data=data, mime_type=file.type or "image/png"))
+        notes.append(f"📎 {name}")
+    if audio_file is not None:
+        parts.append(types.Part.from_bytes(data=audio_file.getvalue(), mime_type="audio/wav"))
+        notes.append("🎙️ voice message")
+    if cam_file is not None:
+        parts.append(types.Part.from_bytes(data=cam_file.getvalue(), mime_type="image/jpeg"))
+        notes.append("📷 photo")
+    parts.append(types.Part.from_text(text=text))
+    return parts, notes
 
-    if st.session_state.final_work_file:
-        st.markdown("<div class='delivery-card'>", unsafe_allow_html=True)
-        st.markdown("🟢 **Real Work Completed! Worldwide Production Asset Compiled Perfectly via Deep Resources.**")
-        st.download_button(
-            label="📥 Download Final Production File (.py)",
-            data=st.session_state.final_work_file,
-            file_name="asha_quantum_renovated_output.py",
-            mime="text/x-python"
+
+def build_contents(new_parts):
+    contents = []
+    for m in ss.messages[-MAX_HISTORY:]:
+        role = "user" if m["role"] == "user" else "model"
+        contents.append(types.Content(role=role, parts=[types.Part.from_text(text=m["content"])]))
+    contents.append(types.Content(role="user", parts=new_parts))
+    return contents
+
+
+def system_prompt() -> str:
+    extra = f"\nThe current user is the app owner, {OWNER_NAME}. Greet them by name if natural." if ss.tier == "owner" else ""
+    extra += ("\nGoogle Search is enabled for this chat: use it for current facts." if use_web
+              else "\nYou cannot browse the web in this chat; say so if asked for live information.")
+    return BASE_PROMPT + extra
+
+
+def stream_reply(contents):
+    tools = [types.Tool(google_search=types.GoogleSearch())] if use_web else None
+    cfg = types.GenerateContentConfig(system_instruction=system_prompt(), temperature=0.6, tools=tools)
+    # Premium/owner: agar chuna hua model band/unavailable ho to doosre par fallback
+    order = [chosen_model] + ([m for m in (MODEL_PRO, MODEL_FAST) if m != chosen_model] if can_pro else [])
+    last_err = None
+    for model in order:
+        sources, started = {}, False
+        try:
+            stream = get_client(API_KEY).models.generate_content_stream(
+                model=model, contents=contents, config=cfg
+            )
+            for chunk in stream:
+                if chunk.text:
+                    started = True
+                    yield chunk.text
+                try:
+                    gm = chunk.candidates[0].grounding_metadata
+                    for gc in gm.grounding_chunks or []:
+                        if gc.web and gc.web.uri:
+                            sources[gc.web.uri] = gc.web.title or gc.web.uri
+                except Exception:
+                    pass
+            if sources:
+                yield "\n\n**Sources:**\n" + "\n".join(
+                    f"- [{t}]({u})" for u, t in list(sources.items())[:5]
+                )
+            return
+        except Exception as e:
+            last_err = e
+            if started:
+                raise
+    raise last_err
+
+
+# ------------------------------------------------------------------
+# Chat
+# ------------------------------------------------------------------
+if not ss.messages:
+    st.info("👋 Namaste! Kuch bhi poochhiye - code, padhai, business, ya koi file analyse karwani ho.")
+
+for m in ss.messages:
+    with st.chat_message(m["role"]):
+        st.markdown(m["content"])
+
+prompt = st.chat_input("Message likhein...")
+
+if prompt:
+    limit = LIMITS[ss.tier]
+    if limit is not None and ss.used >= limit:
+        st.warning("Is session ki limit khatam. Premium pass lein ya page refresh karein.")
+        st.stop()
+
+    parts, notes = build_parts(prompt, uploaded, audio, cam)
+    contents = build_contents(parts)
+    shown = prompt + ("\n\n_" + " · ".join(notes) + "_" if notes else "")
+
+    with st.chat_message("user"):
+        st.markdown(shown)
+    with st.chat_message("assistant"):
+        try:
+            reply = st.write_stream(stream_reply(contents))
+        except Exception as e:
+            reply = None
+            st.error(f"Error: {e}")
+
+    if reply:
+        ss.messages += [{"role": "user", "content": shown}, {"role": "assistant", "content": reply}]
+        ss.used += 1
+        if notes:
+            ss.uploader_key += 1
+        st.rerun()
+
+
+# ------------------------------------------------------------------
+# Real downloads for last answer
+# ------------------------------------------------------------------
+EXT = {"python": "py", "py": "py", "html": "html", "javascript": "js", "js": "js",
+       "css": "css", "json": "json", "bash": "sh", "sql": "sql"}
+
+
+def make_docx(text: str) -> bytes:
+    from docx import Document
+
+    doc = Document()
+    for line in text.split("\n"):
+        if line.startswith("#"):
+            doc.add_heading(line.lstrip("# ").strip(), level=min(line.count("#", 0, 4), 3))
+        else:
+            doc.add_paragraph(line)
+    buf = io.BytesIO()
+    doc.save(buf)
+    return buf.getvalue()
+
+
+if ss.messages and ss.messages[-1]["role"] == "assistant":
+    last = ss.messages[-1]["content"]
+    st.divider()
+    cols = st.columns(3)
+    cols[0].download_button("📥 .md", last, "answer.md", "text/markdown")
+
+    try:
+        cols[1].download_button(
+            "📥 .docx", make_docx(last), "answer.docx",
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
         )
-        st.markdown("</div>", unsafe_allow_html=True)
+    except Exception:
+        pass  # python-docx not installed
 
-    st.write("---")
-
-    # सिंगल-लाइन कंबाइंड बार (हुबहू स्क्रीनशॉट जैसा)
-    st.markdown("<div class='input-wrapper'>", unsafe_allow_html=True)
-    col_plus, col_text, col_mic, col_cam, col_btn = st.columns([1.2, 6.8, 0.8, 0.8, 1.4])
-
-    with col_plus:
-        st.markdown("<div class='hidden-uploader'>+", unsafe_allow_html=True)
-        uploaded_asset = st.file_uploader("upload", type=["txt", "py", "html", "css", "js", "pdf", "zip", "png", "jpg", "jpeg", "json", "apk"], label_visibility="collapsed")
-        st.markdown("</div>", unsafe_allow_html=True)
-        
-    with col_text:
-        user_input = st.text_input("Ask anything", placeholder="Ask anything", label_visibility="collapsed", key="chat_input_text")
-        
-    with col_mic:
-        st.markdown("<div class='icon-placeholder' style='margin-top:10px;'>🎙️</div>", unsafe_allow_html=True)
-        
-    with col_cam:
-        st.markdown("<div class='icon-placeholder' style='margin-top:10px;'>📷</div>", unsafe_allow_html=True)
-        
-    with col_btn:
-        submit_pressed = st.button(label="↑", key="send_btn")
-        
-    st.markdown("</div>", unsafe_allow_html=True)
-
-    if uploaded_asset is not None:
-        st.info(f"📎 फ़ाइल मैप हुई: '{uploaded_asset.name}' (वैश्विक नैनो सैंडबॉक्स पर लोड)")
-
-# -------------------------------------------------------------------------
-# टैब 2: एक्सप्लोर रिसर्च, एंटीग्रैविटी और यूज़ केसेस [इमेज 1 और 2 के अनुसार]
-# -------------------------------------------------------------------------
-with app_mode[1]:
-    st.markdown("<div class='section-title'>Explore Research 🚀 [image_LdbYMt.png]</div>", unsafe_allow_html=True)
-    
-    research_items = {
-        "Frontier AI": "Building the future of AI-powered products and scientific discovery",
-        "Foundational ML": "Exploring the theory and application of ML in language, speech, and more",
-        "Health": "Transforming healthcare and medicine with AI",
-        "Quantum AI": "Building best-in-class quantum computing",
-        "Science": "Enabling scientific innovation in biology, chemistry, physics, and earth science",
-        "Sustainability": "Driving sustainable innovation through technology",
-        "Earth AI": "Taking action on planetary info",
-        "Economy": "Understanding the evolving economic impact of AI"
-    }
-    for title, desc in research_items.items():
-        st.markdown(f"<div class='tech-card'><div class='tech-card-title'>{title}</div><div class='tech-card-desc'>{desc}</div></div>", unsafe_allow_html=True)
-
+    blocks = re.findall(r"```(\w*)\n(.*?)```", last, flags=re.S)
+    if blocks:
+        zbuf = io.BytesIO()
+        with zipfile.ZipFile(zbuf, "w", zipfile.ZIP_DEFLATED) as z:
+            for i, (lang, code) in enumerate(blocks, 1):
+                z.writestr(f"code_{i}.{EXT.get(lang.lower(), 'txt')}", code)
+        cols[2].download_button("📥 Code (.zip)", zbuf.getvalue(), "code.zip", "application/zip")
