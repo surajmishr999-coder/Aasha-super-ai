@@ -184,7 +184,7 @@ if uploaded_asset is not None:
     st.info(f"📎 फ़ाइल मैप हुई: '{uploaded_asset.name}' (वैश्विक नैनो सैंडबॉक्स पर लोड)")
 
 # =========================================================================
-# 4. लाइव बैकएंड ऑटोनॉमस पाइपलाइन
+# 4. लाइव बैकएंड ऑटोनॉमस पाइपलाइन (The Ultimate Multi-Feature Framework Core)
 # =========================================================================
 if submit_pressed and user_input:
     final_query = user_input
@@ -218,4 +218,3 @@ if submit_pressed and user_input:
                 st.session_state.final_work_file = ai_response
         else:
             st.session_state.final_work_file = ai_response
-            
