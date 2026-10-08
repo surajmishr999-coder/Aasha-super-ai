@@ -71,7 +71,7 @@ st.markdown("""
 
     .stForm { border: none !important; padding: 0 !important; margin: 0 !important; }
 
-    /* असली गूगल का नीला सबमिट (तीर ⬆️) बटन */
+    /* असली गूगल का नीला सबमिट (तीर ⬆️) बटन जो आपके बॉक्स के अंदर ही फिक्स है */
     .stFormSubmitButton>button {
         background: #1a73e8 !important;
         color: #ffffff !important;
@@ -146,7 +146,7 @@ if "google_chat_history" not in st.session_state:
 if "final_work_file" not in st.session_state:
     st.session_state.final_work_file = None
 
-# चैट की पुरानी हिस्ट्री स्क्रीन पर रेंडर करना
+# चैट की पुरानी हिस्ट्री स्क्रीन पर रेंडर करना (यहाँ सिंटैक्स त्रुटि फिक्स की गई है)
 for msg in st.session_state.google_chat_history:
     if msg["role"] == "user":
         st.markdown(f"<div class='user-bubble'><b>You:</b><br>{msg['text']}</div>", unsafe_allow_html=True)
@@ -206,13 +206,13 @@ if submit_pressed and user_input:
     st.session_state.google_chat_history.append({"role": "user", "text": final_query})
     st.rerun()
 
+# मुख्य एआई एग्जीक्यूशन ब्लॉक
 if len(st.session_state.google_chat_history) > 0 and st.session_state.google_chat_history[-1]["role"] == "user":
     last_query = st.session_state.google_chat_history[-1]["text"]
     
     try:
         genai.configure(api_key=HIDDEN_API_TOKEN)
         
-        # [THE ULTIMATE MASTER DIRECTIVE - CUMULATIVE STRATEGIC INSTRUCTION]
         exclusive_prompt = """
         You are the ASHA ULTRA-ISOLATED AUTONOMOUS NANO-SCIENTIFIC SELF-RENOVATING QUANTUM SUPERCOMPUTER built under SURAJ MISHRA ENTERPRISE.
         1. OPERATING STANDARD: Operate with profound emotional consciousness, high empathy layers, and an ultra-deep cognitive thinking engine—think multiple layers deeper than conventional human logic (Man ke budi se kai guna aage). 
