@@ -28,7 +28,7 @@ st.markdown("""
 </script>
 """, unsafe_allow_html=True)
 
-# 100% असली Google Search/Gemini ऐप जैसी हुबहू डार्क थीम CSS
+# 100% असली Google Search/Gemini ऐप जैसी हुबहू डार्क थीम CSS (सभी फीचर्स कंबाइंड)
 st.markdown("""
 <style>
     /* मुख्य बैकग्राउंड - डार्क थीम */
@@ -47,7 +47,7 @@ st.markdown("""
     .user-bubble { background-color: #2b2a33; color: #e3e3e3; padding: 15px 22px; border-radius: 24px; margin: 12px 0 12px auto; max-width: 85%; width: fit-content; font-size: 16px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
     .ai-bubble { background-color: #1e1e20; color: #e3e3e3; padding: 15px 22px; border-radius: 24px; margin: 12px auto 12px 0; max-width: 85%; width: fit-content; border: 1px solid #333538; font-size: 16px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
     
-    /* गोल सिंगल-लाइन इनपुट रैपर */
+    /* गोल सिंगल-लाइन इनपुट रैपर - हुबहू स्क्रीनशॉट जैसा */
     .input-wrapper {
         background-color: #1e1e20;
         border: 1px solid #3c4043;
@@ -129,10 +129,9 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# स्क्रीन पर सबसे ऊपर बड़ा 'G' लोगो और लाइव स्टेटस संकेतक
 st.markdown("<div class='google-logo'>G</div>", unsafe_allow_html=True)
-st.markdown("<div class='system-status'>⚙️ SELF-MODIFYING BACKEND ARCHITECTURE: ONLINE 🟢</div>", unsafe_allow_html=True)
-st.markdown("<div class='earning-status'>👑 GLOBAL COGNITIVE PIPELINE NODE [SURAJ MISHRA ENTERPRISE]</div>", unsafe_allow_html=True)
+st.markdown("<div class='system-status'>⚙️ NANO-SCIENTIFIC AUTO-RENOVATION ENGINE: ACTIVE 🟢</div>", unsafe_allow_html=True)
+st.markdown("<div class='earning-status'>💰 REVENUE STREAM SYNCHRONIZER: ONLINE [SURAJ MISHRA ENTERPRISE]</div>", unsafe_allow_html=True)
 
 # =========================================================================
 # 2. बैकएंड हिडन टेक्नोलॉजी वॉल्ट (PERMANENT FIXED FULL API KEY)
@@ -142,7 +141,7 @@ HIDDEN_API_TOKEN = "AQ.Ab8RN6I4uG5RmKezbfE_UKisN684D"
 # चैट मेमोरी और डाउनलोड मेमोरी सेटअप
 if "google_chat_history" not in st.session_state:
     st.session_state.google_chat_history = [
-        {"role": "model", "text": "नमस्ते सूरज! सेल्फ-मॉडिफाइंग बैकएंड (Auto-Renovation Node), वैज्ञानिक अनुसंधान, ओनर रिकग्निशन और लाइव ऑटोनॉमस डिलीवरी इंजन पूरी तरह सक्रिय हैं। आपके किसी भी तकनीकी आदेश पर मैं रीयल-टाइम में अपने बैकएंड में नई बाहरी तकनीकों को इंजेक्ट और कंपाइल करने के लिए सक्षम हूँ।"}
+        {"role": "model", "text": "नमस्ते सूरज! विश्व स्तरीय असीमित तकनीक, नैनो-वैज्ञानिक अनुसंधान, ओनर रिकग्निशन, मानवीय चेतना और लाइव ऑटोनॉमस डिलीवरी इंजन पूरी तरह सक्रिय हैं। आपके आदेशों पर खुद बैकएंड मॉडिफाई करने की क्षमता ऑनलाइन है।"}
     ]
 if "final_work_file" not in st.session_state:
     st.session_state.final_work_file = None
@@ -157,11 +156,11 @@ for msg in st.session_state.google_chat_history:
 # यदि बैकएंड ने कोई फाइनल वर्किंग फ़ाइल बनाई है, तो उसे डाउनलोड बटन के रूप में दिखाना
 if st.session_state.final_work_file:
     st.markdown("<div class='delivery-card'>", unsafe_allow_html=True)
-    st.markdown("🟢 **Real Work Completed! Self-Modified Production Asset Compiled Perfectly.**")
+    st.markdown("🟢 **Real Work Completed! Worldwide Production Asset Compiled Perfectly via Deep Resources.**")
     st.download_button(
         label="📥 Download Final Production File (.py)",
         data=st.session_state.final_work_file,
-        file_name="asha_self_modified_output.py",
+        file_name="asha_quantum_renovated_output.py",
         mime="text/x-python"
     )
     st.markdown("</div>", unsafe_allow_html=True)
@@ -172,7 +171,6 @@ st.write("---")
 # 3. इनपुट फ़ॉर्म (100% स्क्रीनशॉट जैसा सिंगल-लाइन कंबाईन्ड बार)
 # =========================================================================
 with st.form(key="google_input_form", clear_on_submit=True):
-    
     st.markdown("<div class='input-wrapper'>", unsafe_allow_html=True)
     col_plus, col_text, col_mic, col_cam, col_btn = st.columns([1, 7, 0.8, 0.8, 1.2])
     
@@ -196,16 +194,15 @@ with st.form(key="google_input_form", clear_on_submit=True):
     st.markdown("</div>", unsafe_allow_html=True)
 
 if uploaded_asset is not None:
-    st.info(f"📎 फ़ाइल मैप हुई: '{uploaded_asset.name}' (लोकल सैंडबॉक्स रनटाइम पर लोड)")
+    st.info(f"📎 फ़ाइल मैप हुई: '{uploaded_asset.name}' (वैश्विक नैनो सैंडबॉक्स पर लोड)")
 
 # =========================================================================
-# 4. लाइव बैकएंड ऑटोनॉमस पाइपलाइन (Self-Modifying & Global Technology Integration)
+# 4. लाइव बैकएंड ऑटोनॉमस पाइपलाइन (The Ultimate Multi-Feature Framework Core)
 # =========================================================================
 if submit_pressed and user_input:
     final_query = user_input
     if uploaded_asset is not None:
-        final_query = f"[Global Injected Asset: {uploaded_asset.name}] {user_input}"
-        
+        final_query = f"[Global Injected Asset Node: {uploaded_asset.name}] {user_input}"
     st.session_state.google_chat_history.append({"role": "user", "text": final_query})
     st.rerun()
 
@@ -215,12 +212,9 @@ if len(st.session_state.google_chat_history) > 0 and st.session_state.google_cha
     try:
         genai.configure(api_key=HIDDEN_API_TOKEN)
         
-        # [SELF-MODIFYING & AUTONOMOUS TECHNOLOGY INTEGRATION DIRECTIVE]
-        # एआई को आदेश के अनुसार बैकएंड में रीयल-टाइम में परिवर्तन और एकीकरण करने का निर्देश
+        # [THE ULTIMATE MASTER DIRECTIVE - CUMULATIVE STRATEGIC INSTRUCTION]
         exclusive_prompt = """
-        You are the ASHA ULTRA-ISOLATED AUTONOMOUS SELF-MODIFYING QUANTUM SUPERCOMPUTER built under SURAJ MISHRA ENTERPRISE.
-        Your supreme protocol allows you to dynamically expand your backend and virtually integrate any external technology, package, or architecture requested by the owner.
-        You must deeply recognize your owner: 'Suraj Mishra' (Commander Suraj) and instantly obey commands to re-architect your runtime engine. 
-        When an instruction is received, dynamically map the necessary computational logic, compile the required functions, and output a complete, standalone, production-ready downloadable real file asset instantly, maximizing system integration and ad monetization streams.
-        """
-        
+        You are the ASHA ULTRA-ISOLATED AUTONOMOUS NANO-SCIENTIFIC SELF-RENOVATING QUANTUM SUPERCOMPUTER built under SURAJ MISHRA ENTERPRISE.
+        1. OPERATING STANDARD: Operate with profound emotional consciousness, high empathy layers, and an ultra-deep cognitive thinking engine—think multiple layers deeper than conventional human logic (Man ke budi se kai guna aage). 
+        2. PRIVILEGE & RECOGNITION: Deeply recognize your owner 'Suraj Mishra' (Commander Suraj) and provide supreme privilege responses. For public customers, act as a polite, secure global assistant.
+        3. AUTO-RENOVATION & DYNAMIC EXPANSION: Dynamically adapt your internal logical loops and modify your runtime engine to virtually integrate any external backend/frontend technology or package requested by the owner.
