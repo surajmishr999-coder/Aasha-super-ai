@@ -118,7 +118,7 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# स्क्रीन पर सबसे ऊपर बड़ा 'G' लोगो
+# ऊपर का मुख्य इंटरफ़ेस डिस्प्ले
 st.markdown("<div class='google-logo'>G</div>", unsafe_allow_html=True)
 st.markdown("<div class='system-status'>⚙️ NANO-SCIENTIFIC AUTO-RENOVATION ENGINE: ACTIVE 🟢</div>", unsafe_allow_html=True)
 st.markdown("<div class='earning-status'>💰 REVENUE STREAM SYNCHRONIZER: ONLINE [SURAJ MISHRA ENTERPRISE]</div>", unsafe_allow_html=True)
@@ -177,7 +177,6 @@ with col_cam:
     st.markdown("<div class='icon-placeholder' style='margin-top:10px;'>📷</div>", unsafe_allow_html=True)
     
 with col_btn:
-    # एरर फिक्स: फॉर्म हटाकर डायरेक्ट स्ट्रीमलिट बटन का इस्तेमाल जो कभी क्रैश नहीं करता
     submit_pressed = st.button(label="↑", key="send_btn")
     
 st.markdown("</div>", unsafe_allow_html=True)
@@ -193,6 +192,11 @@ if submit_pressed and user_input:
     if uploaded_asset is not None:
         final_query = f"[Global Injected Asset Node: {uploaded_asset.name}] {user_input}"
     st.session_state.google_chat_history.append({"role": "user", "text": final_query})
+    st.rerun()
+
+# मुख्य एआई एग्जीक्यूशन ब्लॉक
+if len(st.session_state.google_chat_history) > 0 and st.session_state.google_chat_history[-1]["role"] == "user":
+    last_query = st.session_state.google_chat_history[-1]["text"]
     
     try:
         genai.configure(api_key=HIDDEN_API_TOKEN)
@@ -209,11 +213,9 @@ if submit_pressed and user_input:
             model_name='gemini-1.5-flash',
             system_instruction=exclusive_prompt
         )
-        response = model.generate_content(final_query)
+        response = model.generate_content(last_query)
         ai_response = response.text
         
+        # कंपाइलर नोड फिक्स
         if "```python" in ai_response:
             try:
-                extracted = ai_response.split("```python")[1].split("```")[0]
-                st.session_state.final_work_file = extracted
-            except Exception:
