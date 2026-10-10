@@ -65,7 +65,7 @@ LLAMA_MODEL = get_secret("LLAMA_MODEL", "Llama-3.3-70B-Instruct")
 
 GROQ_KEY = get_secret("GROQ_API_KEY")
 GROQ_BASE_URL = get_secret("GROQ_BASE_URL", "https://api.groq.com/openai/v1")
-GROQ_MODEL = get_secret("GROQ_MODEL", "llama-3.3-70b-versatile")
+GROQ_MODEL = get_secret("GROQ_MODEL", "openai/gpt-oss-120b")
 CEREBRAS_KEY = get_secret("CEREBRAS_API_KEY")
 CEREBRAS_BASE_URL = get_secret("CEREBRAS_BASE_URL", "https://api.cerebras.ai/v1")
 CEREBRAS_MODEL = get_secret("CEREBRAS_MODEL", "llama-3.3-70b")
