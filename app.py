@@ -66,6 +66,47 @@ LLAMA_MODEL = get_secret("LLAMA_MODEL", "Llama-3.3-70B-Instruct")
 GROQ_KEY = get_secret("GROQ_API_KEY")
 GROQ_BASE_URL = get_secret("GROQ_BASE_URL", "https://api.groq.com/openai/v1")
 GROQ_MODEL = get_secret("GROQ_MODEL", "llama-3.3-70b-versatile")
+CEREBRAS_KEY = get_secret("CEREBRAS_API_KEY")
+CEREBRAS_BASE_URL = get_secret("CEREBRAS_BASE_URL", "https://api.cerebras.ai/v1")
+CEREBRAS_MODEL = get_secret("CEREBRAS_MODEL", "llama-3.3-70b")
+OPENROUTER_KEY = get_secret("OPENROUTER_API_KEY")
+OPENROUTER_BASE_URL = get_secret("OPENROUTER_BASE_URL", "https://openrouter.ai/api/v1")
+OPENROUTER_MODEL = get_secret("OPENROUTER_MODEL", "meta-llama/llama-3.3-70b-instruct:free")
+# Extra providers (sab OpenAI-compatible). Key set ho to chain me khud judte hain.
+EXTRA = {
+    "Mistral": (get_secret("MISTRAL_API_KEY"), get_secret("MISTRAL_BASE_URL", "https://api.mistral.ai/v1"),
+                get_secret("MISTRAL_MODEL", "mistral-small-latest")),
+    "NVIDIA": (get_secret("NVIDIA_API_KEY"), get_secret("NVIDIA_BASE_URL", "https://integrate.api.nvidia.com/v1"),
+               get_secret("NVIDIA_MODEL", "meta/llama-3.3-70b-instruct")),
+    "Cohere": (get_secret("COHERE_API_KEY"), get_secret("COHERE_BASE_URL", "https://api.cohere.com/compatibility/v1"),
+               get_secret("COHERE_MODEL", "command-r7b-12-2024")),
+    "DeepSeek": (get_secret("DEEPSEEK_API_KEY"), get_secret("DEEPSEEK_BASE_URL", "https://api.deepseek.com/v1"),
+                 get_secret("DEEPSEEK_MODEL", "deepseek-chat")),
+    "xAI": (get_secret("XAI_API_KEY"), get_secret("XAI_BASE_URL", "https://api.x.ai/v1"),
+            get_secret("XAI_MODEL", "grok-3-mini")),
+    "GitHub": (get_secret("GITHUB_MODELS_KEY"), get_secret("GITHUB_MODELS_BASE_URL", "https://models.github.ai/inference"),
+               get_secret("GITHUB_MODELS_MODEL", "openai/gpt-4.1-mini")),
+}
+
+
+def keys_of(v) -> list:
+    """Secrets me kai keys comma se alag karke daal sakte hain: "key1,key2,key3"."""
+    return [k.strip() for k in str(v or "").split(",") if k.strip()]
+
+
+GEM_KEYS = keys_of(API_KEY)
+if GEM_KEYS:
+    API_KEY = GEM_KEYS[0]
+GEM_CUR = [API_KEY]  # abhi kaunsi Gemini key chal rahi hai
+KEYMAP = {"Groq": GROQ_KEY, "Cerebras": CEREBRAS_KEY, "OpenRouter": OPENROUTER_KEY,
+          "OpenAI": OPENAI_KEY, "Llama": LLAMA_KEY, **{n: v[0] for n, v in EXTRA.items()}}
+
+
+@st.cache_resource
+def _cooldowns() -> dict:
+    return {}  # {"Groq#0": time jab tak skip karna hai} - sab users ke liye shared
+
+
 OWNER_TOTP_SECRET = get_secret("OWNER_TOTP_SECRET")  # base32; khali ho to 2-step band
 HPC_API_URL = get_secret("HPC_API_URL")  # apna supercomputer / cloud-compute gateway (https)
 HPC_API_KEY = get_secret("HPC_API_KEY")
@@ -212,7 +253,7 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-if not (API_KEY or OPENAI_KEY or LLAMA_KEY or GROQ_KEY):
+if not (API_KEY or OPENAI_KEY or LLAMA_KEY or GROQ_KEY or CEREBRAS_KEY or OPENROUTER_KEY or any(v[0] for v in EXTRA.values())):
     st.error("Koi API key set nahi hai. GEMINI_API_KEY ko Secrets / Environment me daaliye.")
     st.stop()
 
@@ -308,6 +349,8 @@ def friendly_error(e: Exception) -> str:
     raw = str(e)
     log_event("error", detail=raw[:300])
     s = raw.upper()
+    if "RESOURCE_EXHAUSTED" in s or "QUOTA" in s:
+        return "Aaj ki free AI limit poori ho gayi hai. Thodi der baad ya kal dobara koshish karein. 🙏"
     if re.search(r"\b(500|503|429)\b", s) or any(k in s for k in ("UNAVAILABLE", "RESOURCE_EXHAUSTED", "INTERNAL", "TIMEOUT", "TIMED OUT")):
         return "Server abhi busy hai, aapki galti nahi hai. 1-2 minute baad dobara koshish karein, main yahin hoon. 🙂"
     if "NOT_FOUND" in s or re.search(r"\b404\b", s):
@@ -1040,8 +1083,15 @@ def text_limit() -> int:
     return 1_000_000 if ss.tier == "owner" else MAX_TEXT_CHARS
 
 
+def is_quota(e: Exception) -> bool:
+    s = str(e).upper()
+    return "RESOURCE_EXHAUSTED" in s or "QUOTA" in s
+
+
 def is_transient(e: Exception) -> bool:
     s = str(e).upper()
+    if is_quota(e):
+        return False  # quota khatam: retry bekaar, seedha agle model/provider par jao
     return bool(re.search(r"\b(500|503|429)\b", s)) or any(
         k in s for k in ("UNAVAILABLE", "RESOURCE_EXHAUSTED", "INTERNAL", "DEADLINE", "TIMED OUT", "TIMEOUT"))
 
@@ -1185,7 +1235,7 @@ def stream_reply(contents):
                 cfg = types.GenerateContentConfig(
                     system_instruction=system_prompt(), temperature=temp, tools=tools or None,
                     safety_settings=safety_settings())
-                stream = get_client(API_KEY).models.generate_content_stream(
+                stream = get_client(GEM_CUR[0]).models.generate_content_stream(
                     model=model, contents=current_contents(), config=cfg)
                 for chunk in stream:
                     cand = chunk.candidates[0] if chunk.candidates else None
@@ -1240,7 +1290,7 @@ def simple_generate(text: str) -> str:
     for model in model_order():
         for attempt in range(MAX_RETRIES):
             try:
-                r = get_client(API_KEY).models.generate_content(
+                r = get_client(GEM_CUR[0]).models.generate_content(
                     model=model, contents=text,
                     config=types.GenerateContentConfig(system_instruction=VERIFY_PROMPT, temperature=0.2,
                                                        safety_settings=safety_settings()))
@@ -1271,18 +1321,72 @@ def build_text_only(text: str, file, audio_file, cam_file):
     return text, notes_, dropped
 
 
-def stream_openai_compatible(provider_: str, text: str):
+def _client_for(unit: str):
     from openai import OpenAI  # lazy import
+    p, _, i = unit.partition("#")
+    ks = keys_of(KEYMAP.get(p))
+    key = ks[int(i or 0)] if ks else ""
+    if p == "OpenAI":
+        return OpenAI(api_key=key), OPENAI_MODEL
+    if p == "Groq":
+        return OpenAI(api_key=key, base_url=GROQ_BASE_URL), GROQ_MODEL
+    if p == "Cerebras":
+        return OpenAI(api_key=key, base_url=CEREBRAS_BASE_URL), CEREBRAS_MODEL
+    if p == "OpenRouter":
+        return OpenAI(api_key=key, base_url=OPENROUTER_BASE_URL), OPENROUTER_MODEL
+    if p in EXTRA:
+        return OpenAI(api_key=key, base_url=EXTRA[p][1]), EXTRA[p][2]
+    return OpenAI(api_key=key, base_url=LLAMA_BASE_URL), LLAMA_MODEL
 
-    if provider_ == "OpenAI":
-        client, model = OpenAI(api_key=OPENAI_KEY), OPENAI_MODEL
-    elif provider_ == "Groq":
-        client, model = OpenAI(api_key=GROQ_KEY, base_url=GROQ_BASE_URL), GROQ_MODEL
-    else:
-        client, model = OpenAI(api_key=LLAMA_KEY, base_url=LLAMA_BASE_URL), LLAMA_MODEL
+
+# Photo/camera samajhne wale (vision) models - naam badalna ho to secrets se override
+VISION_MODELS = {
+    "OpenAI": get_secret("OPENAI_VISION_MODEL", OPENAI_MODEL),
+    "Groq": get_secret("GROQ_VISION_MODEL", "meta-llama/llama-4-scout-17b-16e-instruct"),
+    "OpenRouter": get_secret("OPENROUTER_VISION_MODEL", "google/gemma-3-27b-it:free"),
+}
+IMG_EXT = (".png", ".jpg", ".jpeg", ".webp", ".gif")
+
+
+def get_image(uploaded_, cam_):
+    """(bytes, mime) ya None - camera photo ya image file."""
+    import mimetypes
+    if cam_ is not None:
+        return cam_.getvalue(), "image/jpeg"
+    if uploaded_ is not None and uploaded_.name.lower().endswith(IMG_EXT):
+        return uploaded_.getvalue(), mimetypes.guess_type(uploaded_.name)[0] or "image/jpeg"
+    return None
+
+
+def transcribe_audio(audio_) -> str:
+    """Voice ko text banata hai (Groq whisper, phir OpenAI whisper)."""
+    data = audio_.getvalue()
+    for p, mdl in (("Groq", "whisper-large-v3-turbo"), ("OpenAI", "whisper-1")):
+        if not ((p == "Groq" and GROQ_KEY) or (p == "OpenAI" and OPENAI_KEY)):
+            continue
+        try:
+            client, _ = _client_for(p)
+            r = client.audio.transcriptions.create(model=mdl, file=("voice.wav", data))
+            if getattr(r, "text", ""):
+                return r.text
+        except Exception as e:
+            log_event("transcribe_fail", provider=p, detail=str(e)[:200])
+    return ""
+
+
+def stream_openai_compatible(provider_: str, text: str, image=None):
+    client, model = _client_for(provider_)
     msgs = [{"role": "system", "content": system_prompt()}]
     msgs += [{"role": m["role"], "content": m["content"]} for m in ss.messages[-hist_limit():]]
-    msgs.append({"role": "user", "content": text})
+    if image:
+        import base64
+        model = VISION_MODELS[provider_.split("#")[0]]
+        b64 = base64.b64encode(image[0]).decode()
+        msgs.append({"role": "user", "content": [
+            {"type": "text", "text": text},
+            {"type": "image_url", "image_url": {"url": f"data:{image[1]};base64,{b64}"}}]})
+    else:
+        msgs.append({"role": "user", "content": text})
     stream = client.chat.completions.create(model=model, messages=msgs, stream=True)
     for chunk in stream:
         if chunk.choices and chunk.choices[0].delta.content:
@@ -1353,14 +1457,14 @@ tb = st.columns(3)
 with tb[2]:
     with st.popover("⚙️ Model & tools"):
         can_pro = ss.tier in ("paid", "owner")
-        available = [n for n, k in (("Gemini", API_KEY), ("OpenAI", OPENAI_KEY), ("Llama", LLAMA_KEY), ("Groq", GROQ_KEY)) if k]
+        available = [n for n, k in (("Gemini", API_KEY), ("OpenAI", OPENAI_KEY), ("Llama", LLAMA_KEY), ("Groq", GROQ_KEY), ("Cerebras", CEREBRAS_KEY), ("OpenRouter", OPENROUTER_KEY)) + tuple((n, v[0]) for n, v in EXTRA.items()) if k]
         if IS_OWNER:  # provider/model ka chunav sirf owner ko dikhta hai
             provider = st.selectbox(
                 "🤝 AI provider", available, key=f"prov_{ss.tier}",
                 help="Gemini me file, voice, camera aur tools chalte hain. OpenAI/Llama/Groq me sirf text aur text-files.",
             )
         else:
-            provider = "Gemini" if API_KEY else available[0]
+            provider = next((p for p in ("Groq", "Cerebras", "OpenRouter") if p in available), "Gemini" if API_KEY else available[0])
         is_gem = provider == "Gemini"
         use_web = st.toggle("🌐 Live web search", value=True, disabled=not is_gem,
                             help="Internet se taaza jawab, sources ke saath.") and is_gem
@@ -1384,7 +1488,7 @@ with tb[2]:
         else:
             want_pro = False
         chosen_model = MODEL_PRO if (can_pro and want_pro) else MODEL_FAST
-        shown_model = {"Gemini": chosen_model, "OpenAI": OPENAI_MODEL, "Llama": LLAMA_MODEL, "Groq": GROQ_MODEL}[provider]
+        shown_model = {"Gemini": chosen_model, "OpenAI": OPENAI_MODEL, "Llama": LLAMA_MODEL, "Groq": GROQ_MODEL, "Cerebras": CEREBRAS_MODEL, "OpenRouter": OPENROUTER_MODEL, **{n: v[2] for n, v in EXTRA.items()}}[provider]
         if IS_OWNER:
             st.caption(f"Model: `{shown_model}`")
         speak_on = st.toggle("🔊 Jawab bolkar sunao", value=False, key="speak_on_tg")
@@ -1523,14 +1627,88 @@ if prompt:
     log_event("chat", tier=ss.tier, provider=provider, mode=mode_name, chars=len(prompt),
               web=use_web, code=use_code, url=use_url, deep=deep, human=human)
 
-    if is_gem:
+    needs_gem = bool(API_KEY) and (
+        cam is not None or audio is not None
+        or (uploaded is not None and not uploaded.name.lower().endswith(TEXT_EXT)))
+    _text_keys = {"Groq": GROQ_KEY, "Cerebras": CEREBRAS_KEY, "OpenRouter": OPENROUTER_KEY,
+                  "OpenAI": OPENAI_KEY, "Llama": LLAMA_KEY, **{n: v[0] for n, v in EXTRA.items()}}
+    has_media = needs_gem or (is_gem and (cam is not None or audio is not None or (
+        uploaded is not None and not uploaded.name.lower().endswith(TEXT_EXT))))
+    if has_media:
         parts, notes_out = build_parts(model_prompt, uploaded, audio, cam)
-        gen = stream_reply(build_contents(parts))
+        text_in = None
     else:
         text_in, notes_out, dropped = build_text_only(model_prompt, uploaded, audio, cam)
-        if dropped:
+        if dropped and not is_gem:
             st.warning(f"Ye abhi nahi chalta, hata diya: {', '.join(dropped)}.")
-        gen = stream_openai_compatible(provider, text_in)
+        parts = None
+
+    # Fallback chain: chuna hua provider pehle, phir baaki sab jinki key set hai.
+    # Photo/voice/camera ho to sirf Gemini (baaki media nahi samajhte).
+    if parts is not None:
+        chain = ["Gemini"]
+        # Gemini fail ho to: sirf photo/voice ho (PDF nahi) to vision providers + voice transcript
+        _only_simple = (uploaded is None or uploaded.name.lower().endswith(IMG_EXT + TEXT_EXT))
+        if _only_simple:
+            chain += [p for p in VISION_MODELS if _text_keys.get(p)] if get_image(uploaded, cam) else \
+                     [p for p in ("Groq", "Cerebras", "OpenRouter", "Mistral", "NVIDIA", "Cohere", "GitHub", "Llama", "DeepSeek", "xAI", "OpenAI") if _text_keys.get(p)]
+    else:
+        order = [provider, "Groq", "Cerebras", "OpenRouter", "Mistral", "NVIDIA", "Cohere", "GitHub", "Gemini", "Llama", "DeepSeek", "xAI", "OpenAI"]
+        chain = []
+        for p in order:
+            if p not in chain and (p == "Gemini" and API_KEY or _text_keys.get(p)):
+                chain.append(p)
+
+    def _expand(names):
+        out = []
+        for n in names:
+            ks = GEM_KEYS if n == "Gemini" else keys_of(KEYMAP.get(n))
+            out += [f"{n}#{i}" for i in range(max(1, len(ks)))]
+        return out
+
+    _units = _expand(chain)
+    _cd = _cooldowns()
+    _now = time.time()
+    _units = [u for u in _units if _cd.get(u, 0) <= _now] or _units  # khatam wale skip (sab khatam ho to sab try)
+
+    def gen_chain():
+        last = None
+        for u in _units:
+            p = u.split("#")[0]
+            started = False
+            try:
+                if p == "Gemini":
+                    GEM_CUR[0] = GEM_KEYS[int(u.split("#")[1])] if GEM_KEYS else API_KEY
+                    g_parts = parts if parts is not None else build_parts(model_prompt, uploaded, audio, cam)[0]
+                    it = stream_reply(build_contents(g_parts))
+                elif parts is not None:  # media wala message, Gemini ke baad ka backup
+                    _t = model_prompt
+                    if audio is not None:
+                        _tr = transcribe_audio(audio)
+                        if not _tr and not get_image(uploaded, cam):
+                            raise RuntimeError("voice samajh nahi paaye")
+                        _t += "\n\n[Voice transcript]: " + _tr
+                    if uploaded is not None and uploaded.name.lower().endswith(TEXT_EXT):
+                        _t += "\n\n" + uploaded.getvalue().decode("utf-8", errors="replace")[:text_limit()]
+                    it = stream_openai_compatible(u, _t, get_image(uploaded, cam))
+                else:
+                    it = stream_openai_compatible(u, text_in)
+                for piece in it:
+                    started = True
+                    yield piece
+                _cd.pop(u, None)
+                return
+            except Exception as ex:
+                last = ex
+                _es = str(ex).upper()
+                _cd[u] = time.time() + (1800 if is_quota(ex) else 90 if "429" in _es else 300)
+                log_event("provider_fail", provider=u, detail=str(ex)[:200])
+                if started:  # beech me ruka - dusra provider shuru se jawab na de
+                    yield "\n\n⚠️ _Jawab beech me ruk gaya. 'continue' likhiye._"
+                    return
+                continue
+        raise last or RuntimeError("Koi provider available nahi")
+    gen = gen_chain()
     if sci_src:
         notes_out.append("🔭 " + ", ".join(sci_src))
     if hpc_used:
