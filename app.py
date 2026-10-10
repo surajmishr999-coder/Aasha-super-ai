@@ -1343,6 +1343,4 @@ if prompt:
         st.warning("Pehle sidebar me Terms & Conditions padhkar tick karein.")
         st.stop()
     now_ts = time.time()
-        if not is_owner and now_ts - ss.last_ts < MIN_SECONDS_BETWEEN:
-        st.warning("Thoda ruk kar bhejiye.")
-        st.stop()
+    
