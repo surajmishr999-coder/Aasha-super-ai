@@ -27,7 +27,7 @@ import streamlit.components.v1 as components
 from google import genai
 from google.genai import types
 
-st.set_page_config(page_title="Asha AI", page_icon="🤖", layout="centered")
+st.set_page_config(page_title="Asha AI", page_icon="🤖", layout="centered", initial_sidebar_state="expanded")
 _CI_PARAMS = inspect.signature(st.chat_input).parameters
 HAS_RICH_INPUT = "accept_file" in _CI_PARAMS  # naya Streamlit: chat box me hi file/audio
 
@@ -185,13 +185,13 @@ st.markdown(
     <style>
     .block-container { max-width: 780px; padding-top: 1.5rem; }
     h1 { text-align: center; }
-    .stApp { background-color: #131314; }
+    .stApp { background-color: #ffffff; color: #1a1a1a; }
     [data-testid="stChatMessage"] { border-radius: 20px; }
     [data-testid="stChatInput"] textarea { border-radius: 24px; }
-    .tech-card { background:#1e1e20; border:1px solid #3c4043; border-radius:16px; padding:12px 14px; margin-bottom:8px; }
-    .tech-card b { color:#fff; } .tech-card span { color:#9aa0a6; font-size:0.85rem; }
+    .tech-card { background:#f5f6f7; border:1px solid #e0e2e6; border-radius:16px; padding:12px 14px; margin-bottom:8px; }
+    .tech-card b { color:#111; } .tech-card span { color:#5f6368; font-size:0.85rem; }
     .badge { display:inline-block; padding:3px 12px; border-radius:20px; font-size:13px;
-             font-weight:600; border:1px solid #38bdf8; color:#38bdf8; }
+             font-weight:600; border:1px solid #0b7cd4; color:#0b7cd4; }
     </style>
     """,
     unsafe_allow_html=True,
@@ -869,21 +869,22 @@ with st.sidebar:
             st.markdown(f"<div class='tech-card'><b>{t}</b><br><span>{d}</span></div>", unsafe_allow_html=True)
         st.caption("Ye sirf jaankari ke liye hai. Kisi topic par sawal poochne ke liye chat me likhein.")
 
-    with st.expander("📜 Terms & Conditions"):
-        st.markdown(TERMS_TEXT)
-    st.checkbox("Maine Terms padh li hain aur maanta/maanti hoon", key="terms_ok")
+    if ss.tier != "owner":  # ye disclaimers sirf customers ke liye hain, owner ko inki zaroorat nahi
+        with st.expander("📜 Terms & Conditions"):
+            st.markdown(TERMS_TEXT)
+        st.checkbox("Maine Terms padh li hain aur maanta/maanti hoon", key="terms_ok")
 
-    with st.expander("🔒 Suraksha aur privacy"):
-        st.markdown(
-            "- Chat sirf aapke is session me rehti hai. Page refresh par mit jati hai.\n"
-            "- Jawab Google Gemini se aate hain, isliye aapka message Google ko process ke liye jata hai.\n"
-            "- Password, OTP, card number, Aadhaar mat likhein. API key jaisa text app khud hata deta hai.\n"
-            "- AI galat ho sakta hai. Sehat, kanoon ya paise ke faisle expert se poochkar lein.\n"
-            "- Science live data chalu karne par sawal ke keywords NASA/USGS/arXiv/PubMed/Open-Meteo jaisi public sites ko jaate hain.\n"
-            "- Ek safety-guard AI aapke message ko jawab se pehle check karta hai.\n"
-            "- 👍/👎 dabane par us jawab ka chhota hissa owner ko dikhta hai.\n"
-            "- Owner login sirf tab dikhta hai jab owner ne use secrets me chalu kiya ho; galat koshish par lockout lagta hai."
-        )
+        with st.expander("🔒 Suraksha aur privacy"):
+            st.markdown(
+                "- Chat sirf aapke is session me rehti hai. Page refresh par mit jati hai.\n"
+                "- Jawab Google Gemini se aate hain, isliye aapka message Google ko process ke liye jata hai.\n"
+                "- Password, OTP, card number, Aadhaar mat likhein. API key jaisa text app khud hata deta hai.\n"
+                "- AI galat ho sakta hai. Sehat, kanoon ya paise ke faisle expert se poochkar lein.\n"
+                "- Science live data chalu karne par sawal ke keywords NASA/USGS/arXiv/PubMed/Open-Meteo jaisi public sites ko jaate hain.\n"
+                "- Ek safety-guard AI aapke message ko jawab se pehle check karta hai.\n"
+                "- 👍/👎 dabane par us jawab ka chhota hissa owner ko dikhta hai.\n"
+                "- Owner login sirf tab dikhta hai jab owner ne use secrets me chalu kiya ho; galat koshish par lockout lagta hai."
+            )
 
     st.divider()
     if ss.messages:
@@ -1167,9 +1168,18 @@ def save_feedback(idx: int, q: str, a: str):
 # ------------------------------------------------------------------
 # Chat (customer aur owner ka ek hi chat box)
 # ------------------------------------------------------------------
+if ss.tier != "owner" and not ss.get("terms_ok"):
+    st.warning("👋 Shuru karne se pehle Terms & Conditions padhkar neeche tick karein.")
+    with st.expander("📜 Terms & Conditions", expanded=True):
+        st.markdown(TERMS_TEXT)
+    if st.checkbox("Maine Terms padh li hain aur maanta/maanti hoon", key="terms_ok_main"):
+        ss.terms_ok = True
+        st.rerun()
+    st.stop()
+
 if not ss.messages:
     st.info("👋 Namaste! Kisi bhi bhasha me poochhiye - code, padhai, business, translation, ya koi file analyse karwani ho. "
-            "Sidebar me Mode aur tools chun sakte hain.")
+            "Upar Lens, Astra Live aur ⚙️ Model & tools se options chun sakte hain.")
 
 for m in ss.messages:
     with st.chat_message(m["role"]):
@@ -1333,149 +1343,4 @@ if prompt:
         st.warning("Pehle sidebar me Terms & Conditions padhkar tick karein.")
         st.stop()
     now_ts = time.time()
-    if not is_owner and now_ts - ss.last_ts < MIN_SECONDS_BETWEEN:
-        st.warning("Thoda ruk kar bhejiye.")
-        st.stop()
-    ss.last_ts = now_ts
-    if not is_owner and len(prompt) > MAX_PROMPT_CHARS:
-        st.warning(f"Message bahut lamba hai (max {MAX_PROMPT_CHARS} akshar). Chhota karke bhejiye ya file attach kijiye.")
-        st.stop()
-    if not is_owner and file_too_big(uploaded):
-        st.warning(f"File bahut badi hai (max {MAX_FILE_MB} MB).")
-        st.stop()
-    prompt, leaked = redact_secrets(prompt)
-    if over_limit():
-        st.stop()
-    blocked = None if is_owner else safety_guard(prompt)
-    if blocked:
-        log_event("guard_block", category=blocked)
-        st.warning("🛡️ Ye request safety rules ki wajah se nahi ho sakti. Koi surakshit ya seekhne wala sawal poochhiye.")
-        st.stop()
-    model_prompt, sci_src = prompt, []
-    if use_sci:
-        with st.spinner("Science data la raha hoon..."):
-            sci_text, sci_src = science_context(prompt)
-        if sci_text:
-            model_prompt = prompt + "\n\n" + sci_text
-    log_event("chat", tier=ss.tier, provider=provider, mode=mode_name, chars=len(prompt),
-              web=use_web, code=use_code, url=use_url, deep=deep, human=human)
-
-    if is_gem:
-        parts, notes_out = build_parts(model_prompt, uploaded, audio, cam)
-        gen = stream_reply(build_contents(parts))
-    else:
-        text_in, notes_out, dropped = build_text_only(model_prompt, uploaded, audio, cam)
-        if dropped:
-            st.warning(f"{provider} me ye nahi chalta, hata diya: {', '.join(dropped)}. Inke liye Gemini chuniye.")
-        gen = stream_openai_compatible(provider, text_in)
-    if sci_src:
-        notes_out.append("🔭 " + ", ".join(sci_src))
-    if leaked:
-        notes_out.append("🔒 key jaisa text hata diya (aisi key delete/badal dein)")
-    shown = (shown_label or prompt) + ("\n\n_" + " · ".join(notes_out) + "_" if notes_out else "")
-
-    with st.chat_message("user"):
-        st.markdown(shown)
-    with st.chat_message("assistant"):
-        try:
-            reply = st.write_stream(gen)
-        except Exception as e:
-            reply = None
-            st.error(friendly_error(e))
-
-    if reply:
-        ss.messages += [{"role": "user", "content": shown}, {"role": "assistant", "content": reply}]
-        ss.used += 1
-        if ss.tier == "free":
-            count_free_message()
-        if notes_out:
-            ss.uploader_key += 1
-        if speak_on or force_speak:
-            ss.speak_text, ss.speak_lang = reply, speak_lang
-        st.rerun()
-
-
-# ------------------------------------------------------------------
-# Actions on the last answer: verify, feedback, downloads
-# ------------------------------------------------------------------
-EXT = {"python": "py", "py": "py", "html": "html", "javascript": "js", "js": "js",
-       "css": "css", "json": "json", "bash": "sh", "sql": "sql"}
-
-
-def make_docx(text: str) -> bytes:
-    from docx import Document
-
-    doc = Document()
-    for line in text.split("\n"):
-        mm = re.match(r"^(#{1,6})\s+(.*)", line)
-        if mm:
-            doc.add_heading(mm.group(2).strip(), level=min(len(mm.group(1)), 3))
-        else:
-            doc.add_paragraph(line)
-    buf = io.BytesIO()
-    doc.save(buf)
-    return buf.getvalue()
-
-
-if ss.messages and ss.messages[-1]["role"] == "assistant":
-    last = ss.messages[-1]["content"]
-    last_idx = len(ss.messages)
-    q_text = next((x["content"] for x in reversed(ss.messages) if x["role"] == "user"), "")
-    st.divider()
-
-    if is_gem:
-        if st.button("🔍 Jawab verify karein (Asha khud check karegi)"):
-            if not over_limit():
-                with st.spinner("Check ho raha hai..."):
-                    try:
-                        review = simple_generate(f"Question:\n{q_text[:4000]}\n\nAnswer:\n{last[:12000]}")
-                    except Exception as e:
-                        review = None
-                        st.error(friendly_error(e))
-                if review:
-                    ss.messages.append({"role": "assistant", "content": "🔍 **Verification**\n\n" + review})
-                    ss.used += 1
-                    if ss.tier == "free":
-                        count_free_message()
-                    st.rerun()
-
-    if hasattr(st, "feedback"):
-        st.caption("Ye jawab kaisa laga? (dabane par is jawab ka chhota hissa owner ko dikhta hai)")
-        st.feedback("thumbs", key=f"fb_{last_idx}", on_change=save_feedback, args=(last_idx, q_text, last))
-
-    cols = st.columns(3)
-    cols[0].download_button("📥 .md", last, "answer.md", "text/markdown")
-    try:
-        cols[1].download_button(
-            "📥 .docx", make_docx(last), "answer.docx",
-            "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-        )
-    except Exception:
-        pass  # python-docx not installed
-
-    blocks = re.findall(r"```(\w*)\n(.*?)```", last, flags=re.S)
-    if blocks:
-        zbuf = io.BytesIO()
-        with zipfile.ZipFile(zbuf, "w", zipfile.ZIP_DEFLATED) as z:
-            for i, (lang, code) in enumerate(blocks, 1):
-                z.writestr(f"code_{i}.{EXT.get(lang.lower(), 'txt')}", code)
-        cols[2].download_button("📥 Code (.zip)", zbuf.getvalue(), "code.zip", "application/zip")
-
-
-# ------------------------------------------------------------------
-# Jawab bolkar sunana (browser ki awaaz, koi extra key nahi)
-# ------------------------------------------------------------------
-SPEAK_HTML = """<button id="b" style="padding:8px 16px;border-radius:20px;border:1px solid #38bdf8;background:#1e1e20;color:#38bdf8;font-size:15px">🔊 Sunao</button>
-<script>
-const t = __TEXT__; const lang = __LANG__;
-function say() { try { speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(t); u.lang = lang; speechSynthesis.speak(u); } catch (e) {} }
-document.getElementById('b').onclick = say; say();
-</script>"""
-
-if ss.get("speak_text"):
-    _t = ss.speak_text.split("**Sources:**")[0]
-    _t = re.sub(r"```.*?```", " ", _t, flags=re.S)
-    _t = re.sub(r"[`*_#>|\[\]]", "", _t)[:1500]
-    components.html(SPEAK_HTML.replace("__TEXT__", json.dumps(_t).replace("</", "<\\/"))
-                    .replace("__LANG__", json.dumps(ss.get("speak_lang", "hi-IN"))), height=55)
-    ss.speak_text = ""
+    if not is_owner and now_ts - ss.last_ts < MIN_SECONDS_B
