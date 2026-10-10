@@ -1344,3 +1344,6 @@ if prompt:
         st.stop()
     now_ts = time.time()
     if not is_owner and now_ts - ss.last_ts < MIN_SECONDS_B
+    components.html(SPEAK_HTML.replace("__TEXT__", json.dumps(_t).replace("</", "<\\/"))
+                    .replace("__LANG__", json.dumps(ss.get("speak_lang", "hi-IN"))), height=55)
+    ss.speak_text = "" 
